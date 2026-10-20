@@ -3,7 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import {
   ArrowRight, ArrowUpRight, BadgeCheck, Check, ChevronRight, Clock3,
   MapPin, Search, ShieldCheck, Sparkles, Star, Wrench, Zap, Wind,
-  Droplets, Sofa, Paintbrush, Refrigerator, HeartHandshake, Menu
+  Droplets, Sofa, Paintbrush, Refrigerator, HeartHandshake
 } from 'lucide-react';
 import { api } from '../services/api.js';
 import { useLanguage } from '../context/LanguageContext.jsx';
