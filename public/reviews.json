@@ -1,0 +1,47 @@
+[
+    {
+      "name": "Mehedi Hasan",
+      "email": "mh@gmail.com",
+      "image": "https://www.libarts.colostate.edu/wp-content/uploads/2018/02/userphoto…",
+      "review": "Lorem, ipsum dolor sit amet consectetur adipisicing elit. Vitae nemo d…",
+      "category": "Home Cleaning",
+      "rating": 4.5,
+      "reviewDate":"09-03-2024"
+    },
+    {
+      "name": "Alo",
+      "email": "alo@gmail.com",
+      "image": "https://www.libarts.colostate.edu/wp-content/uploads/2018/02/userphoto…",
+      "review": "Lorem, ipsum dolor sit amet consectetur adipisicing elit. Vitae nemo d…",
+      "category": "Home Cleaning",
+      "rating": 3,
+      "reviewDate":"10-03-2024"
+    },
+    {
+      "name": "Amit",
+      "email": "amit@gmail.com",
+      "image": "https://www.libarts.colostate.edu/wp-content/uploads/2018/02/userphoto…",
+      "review": "Lorem, ipsum dolor sit amet consectetur adipisicing elit. Vitae nemo d…",
+      "category": "Plumbing & Sanitary",
+      "rating": 4,
+      "reviewDate":"02-02-2024"
+    },
+    {
+      "name": "Asik",
+      "email": "asik@gmail.com",
+      "image": "https://www.libarts.colostate.edu/wp-content/uploads/2018/02/userphoto…",
+      "review": "Lorem, ipsum dolor sit amet consectetur adipisicing elit. Vitae nemo d…",
+      "category": "Plumbing & Sanitary",
+      "rating": 3.5,
+      "reviewDate":"17-06-2024"
+    },
+    {
+      "name": "AlAmin",
+      "email": "alamin@gmail.com",
+      "image": "https://www.libarts.colostate.edu/wp-content/uploads/2018/02/userphoto…",
+      "review": "Lorem, ipsum dolor sit amet consectetur adipisicing elit. Vitae nemo d…",
+      "category": "Painting",
+      "rating": 4,
+      "reviewDate":"20-05-2024"
+    }
+  ]

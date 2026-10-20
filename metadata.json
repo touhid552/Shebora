@@ -1,0 +1,6 @@
+{
+  "name": "Shebora - Home Services Marketplace Dhaka",
+  "description": "Trusted on-demand home service marketplace in Dhaka, Bangladesh. Book verified professionals for AC repair, plumbing, electrical, cleaning, and appliance repair.",
+  "requestFramePermissions": ["geolocation"],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

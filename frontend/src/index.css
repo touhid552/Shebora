@@ -1,0 +1,17 @@
+@import "tailwindcss";
+
+/* Leaflet override to prevent clipping */
+.leaflet-container {
+  width: 100%;
+  height: 100%;
+  border-radius: inherit;
+  font-family: inherit;
+  z-index: 10;
+}
+
+.custom-provider-marker,
+.custom-user-marker,
+.custom-picker-marker {
+  background: transparent;
+  border: none;
+}

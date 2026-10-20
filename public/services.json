@@ -1,0 +1,105 @@
+[
+    {
+      "service": "Home Cleaning",
+      "image":"https://scrubnbubbles.com/wp-content/uploads/2022/05/cleaning-service.jpeg",
+      "overview": "Note To Customer:\nIf Any Delay Happens By Customer (30 Mints +) Then There Will Be An Extra Charge Add With The Service Price\nAfter Delivering The Service, The Customer Must Cross Check The Service Before The Service Person Leaves The Place After That No Complaint Will Be Accepted\nMake Sure To Keep The Expensive Belongings In A Safe Place\nCustomer Need To Provide Fresh Water And Electricity To Support The Service Person\nThe Service price might be change, if the working area is in very poor Condition.\nIf The Work Area Increases Then Extra Price Will Be Added\nMake Sure No Other Work Is Going On When The Cleaning Service Is Being Delivered.\n",
+      "paymentMethod": "After Delivering The Service Customer Need To Pay The Bill Instantly.\nTwo Types Of Payment Are Acceptable- 1. Cod (Cash On Delivery), Digital Payment (Nagad, Bkash, Online Bank Payment)",
+      "faq": [
+        {
+          "question": "Can I reschedule my cleaning appointment?",
+          "answer": "Yes, you can reschedule your cleaning appointment by contacting our customer service at least 24 hours in advance."
+        },
+        {
+          "question": "Do I need to provide cleaning equipment?",
+          "answer": "No, our cleaners come equipped with all the necessary cleaning supplies and equipment."
+        },
+        {
+          "question": "What areas do you cover for home cleaning?",
+          "answer": "We provide home cleaning services in [insert covered areas]. Please check with our customer service for specific locations."
+        }
+      ],
+       "details": "Our plumbing and sanitary services include a wide range of solutions for your plumbing needs. From fixing leaks and clogs to installing new fixtures, our experienced plumbers are here to help. Our services cover both residential and commercial properties.",
+    "pricing": {
+      "policy": "Prices are based on standard service rates. Additional charges may apply for emergency services or extensive repairs.",
+      "payment": "Payment is due upon completion of the service. We accept cash, credit/debit cards, and digital payment methods."
+    },
+    "noteToCustomer": {
+      "preparation": "Before service starts, make sure the water lines, gas lines, and other utilities are turned off.",
+      "delayCharge": "If any delay happens by the customer, there will be an extra charge added to the service price.",
+      "complaintPolicy": "After delivering the service, the customer must cross-check the work before the service person leaves the premises. No complaints will be accepted after the service person has left.",
+      "belongings": "Make sure to keep expensive belongings in a safe place.",
+      "waterElectricity": "Customers need to provide access to fresh water and electricity to support the service person.",
+      "extraCharge": "If the work area increases or additional services are requested, extra charges may apply.",
+      "noOtherWork": "Ensure no other work is being carried out in the premises during the service."
+    }
+    },
+    {
+      "service": "Plumbing & Sanitary Services",
+      "image":"https://lh3.googleusercontent.com/proxy/vEGEXzKGzj3AN1D5YIgW5kBfTJQvkPSlwiVX0LX4bDDkLDbYmEuvHdLobIL8RKpx4nAqWvZedaEcWxkAhoU",
+      "overview": "Note To Customer:\nBefore Service Starts Make Sure The Water Lines, Gas Lines & Other Things Are Closed.\nIf Any Delay Happens By Customer (30 Mints +) Then There Will Be An Extra Charge Add With The Service Price\nAfter Delivering The Service, The Customer Must Cross Check The Service Before The Service Person Leaves The Place After That No Complaint Will Be Accepted\nMake Sure To Keep The Expensive Belongings In A Safe Place\nCustomer Need To Provide Fresh Water And Electricity To Support The Service Person\nThe Service price might be change, if the working area is in very poor Condition.\nIf The Work Area Increases Then Extra Price Will Be Added\nMake Sure No Other Work Is Going On When The Service Is Being Delivered.\n",
+      "paymentMethod": "After Delivering The Service Customer Need To Pay The Bill Instantly.\nTwo Types Of Payment Are Acceptable- 1. Cod (Cash On Delivery), Digital Payment (Nagad, Bkash, Online Bank Payment)",
+      "faq": [
+        {
+          "question": "What emergency plumbing services do you offer?",
+          "answer": "We offer emergency plumbing services for issues such as burst pipes, leaks, and clogged drains. Please contact us immediately for assistance."
+        },
+        {
+          "question": "Do you provide warranty for your plumbing services?",
+          "answer": "Yes, we provide a warranty for our plumbing services. Please check with our customer service for details."
+        },
+        {
+          "question": "How soon can I expect a plumber to arrive?",
+          "answer": "We strive to provide prompt service and typically dispatch a plumber within [insert time frame]."
+        }
+      ],
+       "details": "Our plumbing and sanitary services include a wide range of solutions for your plumbing needs. From fixing leaks and clogs to installing new fixtures, our experienced plumbers are here to help. Our services cover both residential and commercial properties.",
+    "pricing": {
+      "policy": "Prices are based on standard service rates. Additional charges may apply for emergency services or extensive repairs.",
+      "payment": "Payment is due upon completion of the service. We accept cash, credit/debit cards, and digital payment methods."
+    },
+    "noteToCustomer": {
+      "preparation": "Before service starts, make sure the water lines, gas lines, and other utilities are turned off.",
+      "delayCharge": "If any delay happens by the customer, there will be an extra charge added to the service price.",
+      "complaintPolicy": "After delivering the service, the customer must cross-check the work before the service person leaves the premises. No complaints will be accepted after the service person has left.",
+      "belongings": "Make sure to keep expensive belongings in a safe place.",
+      "waterElectricity": "Customers need to provide access to fresh water and electricity to support the service person.",
+      "extraCharge": "If the work area increases or additional services are requested, extra charges may apply.",
+      "noOtherWork": "Ensure no other work is being carried out in the premises during the service."
+    }
+    },
+    {
+      "service": "Painting Services",
+      "image":"https://www.bergerpaints.com/blog/wp-content/uploads/2021/11/Berger-Express-Painting-service-.png",
+      "overview": "Note To Customer:\nMake Sure All The Expensive Belongings Are Removed From The Service Area Before Starting The Work\nIf Any Delay Happens By Customer (30 Mints +) Then There Will Be An Extra Charge Add With The Service Price\nAfter Delivering The Service, The Customer Must Cross Check The Service Before The Service Person Leaves The Place After That No Complaint Will Be Accepted\nCustomer Need To Provide Fresh Water And Electricity To Support The Service Person\nThe Service price might be change, if the working area is in very poor Condition.\nIf The Work Area Increases Then Extra Price Will Be Added\nMake Sure No Other Work Is Going On When The Painting Service Is Being Delivered.\n",
+      "paymentMethod": "After Delivering The Service Customer Need To Pay The Bill Instantly.\nTwo Types Of Payment Are Acceptable- 1. Cod (Cash On Delivery), Digital Payment (Nagad, Bkash, Online Bank Payment)",
+      "faq": [
+        {
+          "question": "Can you provide color consultation services?",
+          "answer": "Yes, we offer color consultation services to help you choose the perfect colors for your space. Please inquire for more information."
+        },
+        {
+          "question": "Do you use eco-friendly paint?",
+          "answer": "Yes, we prioritize the use of eco-friendly paints and materials in our painting services whenever possible."
+        },
+        {
+          "question": "How long does a typical painting project take?",
+          "answer": "The duration of a painting project depends on various factors such as the size of the area, prep work required, and drying time. Our team will provide you with a timeline based on your specific project."
+        }
+      ],
+       "details": "Our plumbing and sanitary services include a wide range of solutions for your plumbing needs. From fixing leaks and clogs to installing new fixtures, our experienced plumbers are here to help. Our services cover both residential and commercial properties.",
+    "pricing": {
+      "policy": "Prices are based on standard service rates. Additional charges may apply for emergency services or extensive repairs.",
+      "payment": "Payment is due upon completion of the service. We accept cash, credit/debit cards, and digital payment methods."
+    },
+    "noteToCustomer": {
+      "preparation": "Before service starts, make sure the water lines, gas lines, and other utilities are turned off.",
+      "delayCharge": "If any delay happens by the customer, there will be an extra charge added to the service price.",
+      "complaintPolicy": "After delivering the service, the customer must cross-check the work before the service person leaves the premises. No complaints will be accepted after the service person has left.",
+      "belongings": "Make sure to keep expensive belongings in a safe place.",
+      "waterElectricity": "Customers need to provide access to fresh water and electricity to support the service person.",
+      "extraCharge": "If the work area increases or additional services are requested, extra charges may apply.",
+      "noOtherWork": "Ensure no other work is being carried out in the premises during the service."
+    }
+    }
+  ]
+  
