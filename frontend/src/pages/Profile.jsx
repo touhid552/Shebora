@@ -1,7 +1,8 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { useAuth } from '../context/AuthContext.jsx';
 import { DHAKA_NEIGHBORHOODS } from '../utils/geo.js';
-import { User, Phone, MapPin, Mail, ShieldCheck, Check } from 'lucide-react';
+import { readImageAsDataUrl } from '../utils/imageUpload.js';
+import { Phone, Check } from 'lucide-react';
 
 export default function Profile() {
   const { user, updateProfile } = useAuth();
@@ -11,6 +12,7 @@ export default function Profile() {
   const [area, setArea] = useState(user?.address?.area || 'Gulshan');
   const [building, setBuilding] = useState(user?.address?.building || '');
   const [road, setRoad] = useState(user?.address?.road || '');
+  const [avatar, setAvatar] = useState('');
   const [saving, setSaving] = useState(false);
   const [message, setMessage] = useState('');
 
@@ -20,7 +22,7 @@ export default function Profile() {
     setMessage('');
     try {
       const hood = DHAKA_NEIGHBORHOODS.find(n => n.area === area) || DHAKA_NEIGHBORHOODS[0];
-      await updateProfile({
+      const updates = {
         name,
         phone,
         address: {
@@ -30,7 +32,9 @@ export default function Profile() {
           lat: hood.lat,
           lng: hood.lng
         }
-      });
+      };
+      if (avatar) updates.avatar = avatar;
+      await updateProfile(updates);
       setMessage('Profile and address saved successfully.');
     } catch (err) {
       setMessage(err.message || 'Update failed.');
@@ -40,7 +44,7 @@ export default function Profile() {
   };
 
   return (
-    <div className="max-w-2xl mx-auto px-4 py-8 space-y-6">
+    <div className="page-shell max-w-2xl space-y-6">
       <div>
         <h1 className="text-2xl font-black text-neutral-900 tracking-tight">Account & Address Settings</h1>
         <p className="text-xs text-neutral-500 mt-1">Keep your contact details and default Dhaka service location up to date.</p>
@@ -53,13 +57,9 @@ export default function Profile() {
         </div>
       )}
 
-      <form onSubmit={handleSubmit} className="bg-white p-6 rounded-2xl border border-neutral-200 shadow-xs space-y-4 text-xs">
+      <form onSubmit={handleSubmit} className="surface-card space-y-4 p-5 text-xs sm:p-6">
         <div className="flex items-center gap-4 pb-4 border-b border-neutral-100">
-          <img
-            src={user?.avatar || 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=200'}
-            alt="Avatar"
-            className="w-14 h-14 rounded-full object-cover border-2 border-emerald-600"
-          />
+          {avatar || user?.avatar ? <img src={avatar || user.avatar} alt="Profile" className="h-14 w-14 rounded-full border-2 border-emerald-600 object-cover" /> : <div aria-hidden="true" className="flex h-14 w-14 items-center justify-center rounded-full bg-emerald-100 text-lg font-bold text-emerald-800">{user?.name?.slice(0, 1)?.toUpperCase() || 'S'}</div>}
           <div>
             <div className="font-bold text-sm text-neutral-900">{user?.name}</div>
             <div className="text-[11px] text-neutral-500 font-mono">{user?.email}</div>
@@ -68,6 +68,15 @@ export default function Profile() {
             </span>
           </div>
         </div>
+
+        <label className="block font-semibold text-neutral-700 mb-1">
+          Change profile picture
+          <input type="file" accept="image/jpeg,image/png,image/webp" onChange={async (e) => {
+            try { setAvatar(await readImageAsDataUrl(e.target.files?.[0])); setMessage(''); }
+            catch (err) { setMessage(err.message); e.target.value = ''; }
+          }} className="mt-1 block w-full p-2 bg-neutral-50 border border-neutral-300 rounded-xl font-normal" />
+          <span className="mt-1 block text-[11px] text-neutral-500">JPG, PNG, or WebP up to 4 MB.</span>
+        </label>
 
         <div>
           <label className="block font-semibold text-neutral-700 mb-1">Full Name</label>

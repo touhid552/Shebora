@@ -1,8 +1,9 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext.jsx';
 import { DHAKA_NEIGHBORHOODS } from '../utils/geo.js';
-import { Wrench, User, Mail, Lock, Phone, MapPin, Briefcase, AlertCircle, ArrowRight } from 'lucide-react';
+import { readImageAsDataUrl } from '../utils/imageUpload.js';
+import { Phone, AlertCircle, ArrowRight } from 'lucide-react';
 
 export default function Register() {
   const { register } = useAuth();
@@ -15,6 +16,8 @@ export default function Register() {
   const [password, setPassword] = useState('');
   const [area, setArea] = useState('Gulshan');
   const [addressLine, setAddressLine] = useState('');
+  const [profilePhoto, setProfilePhoto] = useState('');
+  const [nidImage, setNidImage] = useState('');
 
   // Provider specific
   const [selectedCategories, setSelectedCategories] = useState(['AC Repair']);
@@ -66,6 +69,9 @@ export default function Register() {
         experienceYears: Number(experienceYears)
       };
 
+      if (profilePhoto) payload.avatar = profilePhoto;
+      if (role === 'provider') payload.nidImage = nidImage;
+
       const res = await register(payload);
       if (role === 'provider') {
         navigate('/dashboard/provider');
@@ -80,11 +86,11 @@ export default function Register() {
   };
 
   return (
-    <div className="max-w-xl mx-auto px-4 py-12">
-      <div className="bg-white rounded-3xl border border-neutral-200 p-8 shadow-lg space-y-6">
+    <div className="mx-auto w-full max-w-xl px-4 py-8 sm:py-12">
+      <div className="surface-card space-y-6 p-5 shadow-sm sm:p-7">
         <div className="text-center space-y-2">
           <div className="w-14 h-14 rounded-2xl bg-white p-1 border border-neutral-200 shadow-md flex items-center justify-center mx-auto overflow-hidden">
-            <img src="/assets/aistudio/image_cc3069dd.png" alt="Shebora Logo" className="w-full h-full object-contain" />
+            <img src="/assets/brand/shebora-logo.png" alt="Shebora Logo" className="w-full h-full object-contain" />
           </div>
           <h1 className="text-2xl font-black text-neutral-900 tracking-tight">Create a Shebora Account</h1>
           <p className="text-xs text-neutral-500">Join Dhaka's premier home service ecosystem</p>
@@ -130,6 +136,15 @@ export default function Register() {
         )}
 
         <form onSubmit={handleSubmit} className="space-y-4 text-xs">
+          <div>
+            <label className="block font-semibold text-neutral-700 mb-1">Profile picture (optional)</label>
+            <input type="file" accept="image/jpeg,image/png,image/webp" onChange={async (e) => {
+              try { setProfilePhoto(await readImageAsDataUrl(e.target.files?.[0])); setErrorMsg(''); }
+              catch (err) { setErrorMsg(err.message); e.target.value = ''; }
+            }} className="w-full px-3 py-2 bg-neutral-50 border border-neutral-300 rounded-xl" />
+            {profilePhoto && <img src={profilePhoto} alt="Profile preview" className="mt-2 w-16 h-16 rounded-full object-cover" />}
+          </div>
+
           <div>
             <label className="block font-semibold text-neutral-700 mb-1">Full Legal Name</label>
             <input
@@ -210,6 +225,15 @@ export default function Register() {
           {/* Provider Specific Skills */}
           {role === 'provider' && (
             <div className="pt-2 border-t border-neutral-200 space-y-3">
+              <div>
+                <label className="block font-semibold text-neutral-700 mb-1">National ID (NID) image <span className="text-red-600">*</span></label>
+                <p className="text-neutral-500 mb-2">Upload a clear photo of your NID. It will only be used for administrator verification. Image limit: 4 MB.</p>
+                <input type="file" accept="image/jpeg,image/png,image/webp" required={!nidImage} onChange={async (e) => {
+                  try { setNidImage(await readImageAsDataUrl(e.target.files?.[0])); setErrorMsg(''); }
+                  catch (err) { setErrorMsg(err.message); e.target.value = ''; }
+                }} className="w-full px-3 py-2 bg-neutral-50 border border-neutral-300 rounded-xl" />
+                {nidImage && <img src={nidImage} alt="NID preview" className="mt-2 max-h-40 rounded-xl border border-neutral-200" />}
+              </div>
               <div>
                 <label className="block font-semibold text-neutral-700 mb-1.5">Select Service Skills (at least one):</label>
                 <div className="grid grid-cols-2 gap-2">

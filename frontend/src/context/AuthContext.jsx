@@ -1,4 +1,5 @@
-import React, { createContext, useContext, useState, useEffect } from 'react';
+
+import { createContext, useContext, useState, useEffect } from 'react';
 import { api } from '../services/api.js';
 
 export const AuthContext = createContext();
@@ -10,36 +11,61 @@ export const AuthProvider = ({ children }) => {
   const [notifications, setNotifications] = useState([]);
   const [unreadCount, setUnreadCount] = useState(0);
 
-  // Initialize session
+  // Initialize existing session without automatic demo login
   useEffect(() => {
+    let active = true;
+
     async function loadUser() {
-      if (token) {
-        try {
-          const res = await api.getCurrentUser();
+      if (!token) {
+        if (active) {
+          setUser(null);
+          setLoading(false);
+        }
+        return;
+      }
+
+      try {
+        const res = await api.getCurrentUser();
+
+        if (active) {
           if (res?.user) {
             setUser(res.user);
           } else {
-            handleLogout();
+            localStorage.removeItem('shebora_token');
+            setUser(null);
+            setToken(null);
           }
-        } catch (err) {
-          console.warn('Session expired or invalid, auto-logging into demo customer for smooth evaluation');
-          await autoDemoLogin();
         }
-      } else {
-        // Auto-login into default demo customer for instant review experience
-        await autoDemoLogin();
+      } catch (err) {
+        console.warn('Session expired or invalid. Please sign in again.');
+
+        if (active) {
+          localStorage.removeItem('shebora_token');
+          setUser(null);
+          setToken(null);
+        }
+      } finally {
+        if (active) {
+          setLoading(false);
+        }
       }
-      setLoading(false);
     }
 
+    setLoading(true);
     loadUser();
+
+    return () => {
+      active = false;
+    };
   }, [token]);
 
   // Load notifications periodically
   useEffect(() => {
     if (user) {
       loadNotifications();
+
       const interval = setInterval(loadNotifications, 15000);
+
       return () => clearInterval(interval);
     }
   }, [user]);
@@ -47,57 +73,56 @@ export const AuthProvider = ({ children }) => {
   async function loadNotifications() {
     try {
       const res = await api.getNotifications();
+
       if (res?.data) {
         setNotifications(res.data);
         setUnreadCount(res.data.filter(n => !n.read).length);
       }
     } catch {
-      // Ignore background notification fetch errors
+      // Ignore background notification errors
     }
   }
 
-  async function autoDemoLogin() {
-    try {
-      const res = await api.demoLogin('customer');
-      if (res?.user && res?.token) {
-        localStorage.setItem('shebora_token', res.token);
-        setToken(res.token);
-        setUser(res.user);
-      }
-    } catch (e) {
-      console.error('Auto demo login failed:', e);
-    }
-  }
+  const handleLogin = async (email, password, expectedRole) => {
+    const res = await api.login({
+      email,
+      password,
+      expectedRole
+    });
 
-  const handleLogin = async (email, password) => {
-    const res = await api.login({ email, password });
     if (res?.token && res?.user) {
       localStorage.setItem('shebora_token', res.token);
       setToken(res.token);
       setUser(res.user);
     }
+
     return res;
   };
 
   const handleRegister = async (userData) => {
     const res = await api.register(userData);
+
     if (res?.token && res?.user) {
       localStorage.setItem('shebora_token', res.token);
       setToken(res.token);
       setUser(res.user);
     }
+
     return res;
   };
 
   const handleSwitchRole = async (targetRole) => {
     setLoading(true);
+
     try {
       const res = await api.demoLogin(targetRole);
+
       if (res?.token && res?.user) {
         localStorage.setItem('shebora_token', res.token);
         setToken(res.token);
         setUser(res.user);
       }
+
       return res;
     } finally {
       setLoading(false);
@@ -110,13 +135,16 @@ export const AuthProvider = ({ children }) => {
     setUser(null);
     setNotifications([]);
     setUnreadCount(0);
+    setLoading(false);
   };
 
   const handleUpdateProfile = async (profileData) => {
     const res = await api.updateProfile(profileData);
+
     if (res?.user) {
       setUser(prev => ({ ...prev, ...res.user }));
     }
+
     return res;
   };
 
@@ -144,7 +172,11 @@ export const AuthProvider = ({ children }) => {
     markNotificationsRead: handleMarkNotificationsRead
   };
 
-  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
+  return (
+    <AuthContext.Provider value={value}>
+      {children}
+    </AuthContext.Provider>
+  );
 };
 
 export const useAuth = () => useContext(AuthContext);

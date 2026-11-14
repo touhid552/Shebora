@@ -1,19 +1,10 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import { api } from '../services/api.js';
 import { useLanguage } from '../context/LanguageContext.jsx';
-import {
-  Wrench,
-  ShieldCheck,
-  Star,
-  CheckCircle,
-  Clock,
-  MapPin,
-  ChevronDown,
-  ChevronUp,
-  AlertCircle,
-  ArrowRight
-} from 'lucide-react';
+import { defaultServiceImage, resolveServiceImage } from '../utils/serviceImages.js';
+import { getServiceStartingOption } from '../../../shared/servicePackages.js';
+import { Star, CheckCircle, Clock, MapPin, ChevronDown, ChevronUp, ArrowRight } from 'lucide-react';
 
 export default function ServiceDetails() {
   const { id } = useParams();
@@ -57,27 +48,28 @@ export default function ServiceDetails() {
     );
   }
 
+  const startingOption = getServiceStartingOption(service.category, service.basePrice, service.priceUnit);
   const faqs = [
     {
-      q: "Can I reschedule or cancel my booking?",
-      a: "Yes, you can easily reschedule or cancel your appointment free of charge at least 2 hours before the technician is dispatched."
+      q: "How do I request this service?",
+      a: "Choose a service option, provide your address and preferred time, then submit the booking request."
     },
     {
-      q: "Does the service price include spare parts?",
-      a: "The displayed starting price includes standard diagnostics, labor, and water-jet servicing. Any required physical replacement components (capacitors, valves, gas refill) are billed at official market rates with itemized receipts."
+      q: "What does the displayed price mean?",
+      a: "The catalogue shows a starting rate. Review the available service options and booking summary for the price details that apply to your request."
     },
     {
-      q: "What is covered under the 30-day warranty?",
-      a: "If the exact same issue reoccurs within 30 days of service completion, a senior technician is dispatched free of charge to inspect and correct it."
+      q: "Can I see my booking after placing it?",
+      a: "Sign in and open your customer dashboard to review the booking details and current status."
     },
     {
-      q: "Do I have to pay in advance?",
-      a: "No advance payment is needed! You can inspect the technician's completed work and pay Cash on Service (or via bKash/Card) upon full satisfaction."
+      q: "Which areas are served?",
+      a: "The service areas listed below are the areas currently associated with this catalogue service."
     }
   ];
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
+    <div className="page-shell space-y-7">
       {/* Breadcrumb */}
       <div className="flex items-center gap-2 text-xs text-neutral-500">
         <Link to="/" className="hover:text-emerald-700">Home</Link>
@@ -92,11 +84,11 @@ export default function ServiceDetails() {
         <div className="lg:col-span-2 space-y-6">
           <div className="h-72 sm:h-96 w-full rounded-2xl overflow-hidden bg-neutral-100 relative shadow-sm">
             <img
-              src={service.image}
+              src={resolveServiceImage(service.image)}
               alt={service.name}
               className="w-full h-full object-cover"
               onError={(e) => {
-                e.target.src = '/src/assets/why_choose_us/service-1.jpg';
+                e.currentTarget.src = defaultServiceImage;
               }}
             />
             <div className="absolute top-4 left-4 bg-white/95 backdrop-blur-xs px-3 py-1 rounded-md text-xs font-bold text-neutral-900 shadow">
@@ -108,11 +100,11 @@ export default function ServiceDetails() {
             <div className="flex items-center gap-3">
               <span className="inline-flex items-center gap-1 text-xs font-bold text-amber-700 bg-amber-50 px-2.5 py-1 rounded-md border border-amber-200">
                 <Star className="w-3.5 h-3.5 fill-amber-500 text-amber-500" />
-                {service.rating} ({service.reviewsCount} verified reviews)
+                {service.rating} ({service.reviewsCount} reviews)
               </span>
               <span className="inline-flex items-center gap-1 text-xs font-bold text-emerald-800 bg-emerald-50 px-2.5 py-1 rounded-md border border-emerald-200">
-                <ShieldCheck className="w-3.5 h-3.5 text-emerald-600" />
-                {service.warrantyDays}-Day Warranty Included
+                <MapPin className="w-3.5 h-3.5 text-emerald-600" />
+                Dhaka service areas
               </span>
             </div>
 
@@ -246,14 +238,9 @@ export default function ServiceDetails() {
           <div className="bg-white p-6 rounded-2xl border-2 border-emerald-600/30 shadow-md space-y-5 sticky top-24">
             <div className="flex items-baseline justify-between border-b border-neutral-100 pb-4">
               <div>
-                <span className="text-xs text-neutral-400 block font-medium">Standard Service Rate</span>
-                <span className="text-3xl font-black text-neutral-900">৳{service.basePrice}</span>
-                <span className="text-xs text-neutral-500 font-normal"> / {service.priceUnit}</span>
-              </div>
-              <div className="text-right">
-                <span className="inline-block text-[10px] font-bold text-emerald-800 bg-emerald-100 px-2 py-0.5 rounded">
-                  No Advance Needed
-                </span>
+                <span className="text-xs text-neutral-400 block font-medium">Starting rate</span>
+                <span className="text-3xl font-black text-neutral-900">{"\u09f3"}{startingOption.price.toLocaleString('en-BD')}</span>
+                <span className="text-xs text-neutral-500 font-normal"> / {startingOption.unit}</span>
               </div>
             </div>
 
@@ -261,14 +248,6 @@ export default function ServiceDetails() {
               <div className="flex items-center gap-2">
                 <Clock className="w-4 h-4 text-emerald-600" />
                 <span>Estimated duration: <strong>{service.estimatedDuration}</strong></span>
-              </div>
-              <div className="flex items-center gap-2">
-                <ShieldCheck className="w-4 h-4 text-emerald-600" />
-                <span>Warranty: <strong>{service.warrantyDays} days guarantee</strong></span>
-              </div>
-              <div className="flex items-center gap-2">
-                <CheckCircle className="w-4 h-4 text-emerald-600" />
-                <span>Payment: <strong>Cash on Service or bKash / Card</strong></span>
               </div>
             </div>
 
@@ -287,10 +266,6 @@ export default function ServiceDetails() {
               <MapPin className="w-3.5 h-3.5 text-emerald-600" />
               Locate Nearby {service.category} on Map
             </Link>
-
-            <div className="p-3 bg-neutral-50 rounded-lg text-[11px] text-neutral-500 leading-relaxed">
-              💡 <strong>Shebora Guarantee:</strong> You only pay after cross-checking the technician's completed work on your premises.
-            </div>
           </div>
         </div>
       </div>

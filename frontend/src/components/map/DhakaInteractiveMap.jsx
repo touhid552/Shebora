@@ -1,8 +1,8 @@
-import React, { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import L from 'leaflet';
 import { DHAKA_CENTER, DHAKA_NEIGHBORHOODS } from '../../utils/geo.js';
 import { useLanguage } from '../../context/LanguageContext.jsx';
-import { MapPin, Navigation, Compass, Star, Phone, ShieldCheck, ExternalLink, Filter } from 'lucide-react';
+import { MapPin, Navigation, Filter } from 'lucide-react';
 
 export default function DhakaInteractiveMap({
   providers = [],

@@ -1,23 +1,12 @@
-import React, { useState, useEffect } from 'react';
+﻿import { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { api } from '../services/api.js';
+import AISmartAssistant from '../components/AISmartAssistant.jsx';
 import { useLanguage } from '../context/LanguageContext.jsx';
+import { defaultServiceImage, resolveServiceImage } from '../utils/serviceImages.js';
 import DhakaInteractiveMap from '../components/map/DhakaInteractiveMap.jsx';
-import {
-  Wrench,
-  ShieldCheck,
-  MapPin,
-  Clock,
-  Star,
-  CheckCircle,
-  Search,
-  ArrowRight,
-  Phone,
-  Flame,
-  Award,
-  Users,
-  Compass
-} from 'lucide-react';
+import { getServiceStartingOption } from '../../../shared/servicePackages.js';
+import { ShieldCheck, Clock, Star, CheckCircle, Search, ArrowRight, Award, Compass, Snowflake, Droplets, Zap, Sparkles, Refrigerator, Paintbrush } from 'lucide-react';
 
 export default function Home() {
   const { t, lang } = useLanguage();
@@ -25,10 +14,7 @@ export default function Home() {
 
   const [services, setServices] = useState([]);
   const [providers, setProviders] = useState([]);
-  const [reviews, setReviews] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
-  const [selectedCategory, setSelectedCategory] = useState('All');
-  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     async function loadData() {
@@ -42,7 +28,6 @@ export default function Home() {
       } catch (err) {
         console.error('Error loading home data:', err);
       } finally {
-        setLoading(false);
       }
     }
     loadData();
@@ -58,39 +43,41 @@ export default function Home() {
   };
 
   const serviceCategories = [
-    { name: "AC Repair", bn: "এসি মেরামত", icon: "❄️", price: 1200, color: "bg-blue-50 text-blue-700 border-blue-200" },
-    { name: "Plumbing", bn: "প্লাম্বিং সেবা", icon: "🔧", price: 800, color: "bg-teal-50 text-teal-700 border-teal-200" },
-    { name: "Electrical Repair", bn: "ইলেকট্রিক্যাল", icon: "⚡", price: 650, color: "bg-amber-50 text-amber-700 border-amber-200" },
-    { name: "Home Cleaning", bn: "ডিপ ক্লিনিং", icon: "✨", price: 2500, color: "bg-emerald-50 text-emerald-700 border-emerald-200" },
-    { name: "Appliance Repair", bn: "ফ্রিজ ও ওয়াশিং মেশিন", icon: "🧰", price: 950, color: "bg-indigo-50 text-indigo-700 border-indigo-200" },
-    { name: "Painting", bn: "দেয়াল পেইন্টিং", icon: "🎨", price: 4500, color: "bg-purple-50 text-purple-700 border-purple-200" }
+    { name: "AC Repair", bn: "এসি মেরামত", icon: Snowflake, color: "bg-sky-50 text-sky-700" },
+    { name: "Plumbing", bn: "প্লাম্বিং সেবা", icon: Droplets, color: "bg-teal-50 text-teal-700" },
+    { name: "Electrical Repair", bn: "ইলেকট্রিক্যাল", icon: Zap, color: "bg-amber-50 text-amber-700" },
+    { name: "Home Cleaning", bn: "ডিপ ক্লিনিং", icon: Sparkles, color: "bg-emerald-50 text-emerald-700" },
+    { name: "Appliance Repair", bn: "ফ্রিজ ও ওয়াশিং মেশিন", icon: Refrigerator, color: "bg-indigo-50 text-indigo-700" },
+    { name: "Painting", bn: "দেয়াল পেইন্টিং", icon: Paintbrush, color: "bg-rose-50 text-rose-700" }
   ];
 
   return (
-    <div className="space-y-16 pb-12">
+    <div className="space-y-12 pb-12">
       {/* Hero Banner with Dhaka backdrop and search */}
-      <section className="relative bg-gradient-to-br from-emerald-900 via-neutral-900 to-neutral-950 text-white overflow-hidden py-16 lg:py-24">
+      <section className="home-hero relative overflow-hidden py-12 text-white sm:py-16">
+        <img src="/images/services/electrical-hazards.webp" alt="" aria-hidden="true" className="absolute inset-0 h-full w-full object-cover object-center opacity-20 lg:inset-y-0 lg:left-auto lg:right-0 lg:w-[52%] lg:opacity-100" />
+        <div className="absolute inset-0 bg-gradient-to-r from-neutral-900 via-neutral-900/90 to-neutral-900/55 lg:from-neutral-900 lg:via-neutral-900/95 lg:to-transparent" />
         {/* Subtle decorative glow */}
-        <div className="absolute top-0 right-0 -mr-20 -mt-20 w-96 h-96 rounded-full bg-emerald-500/10 blur-3xl pointer-events-none"></div>
-        <div className="absolute bottom-0 left-0 -ml-20 -mb-20 w-96 h-96 rounded-full bg-teal-500/10 blur-3xl pointer-events-none"></div>
+        <div className="absolute top-0 right-0 -mr-20 -mt-20 w-96 h-96 rounded-full bg-slate-300/5 blur-3xl pointer-events-none"></div>
+        <div className="absolute bottom-0 left-0 -ml-20 -mb-20 w-96 h-96 rounded-full bg-slate-400/5 blur-3xl pointer-events-none"></div>
 
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-          <div className="max-w-3xl space-y-6">
+          <div className="max-w-3xl space-y-5">
             <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-300 text-xs font-semibold tracking-wide">
               <span className="w-2 h-2 rounded-full bg-emerald-400"></span>
-              Verified Doorstep Technicians Across Dhaka
+              Home services across Dhaka
             </div>
 
             <h1 className="text-3xl sm:text-4xl lg:text-5xl font-black tracking-tight leading-tight">
               {lang === 'bn' ? (
                 <>আপনার বাসায় অভিজ্ঞ ও বিশ্বস্ত <span className="text-emerald-400">হোম সার্ভিস</span></>
               ) : (
-                <>Professional & Verified <span className="text-emerald-400">Home Services</span> in Dhaka</>
+                <>Find help for your <span className="text-emerald-400">home in Dhaka</span></>
               )}
             </h1>
 
             <p className="text-sm sm:text-base text-neutral-300 leading-relaxed max-w-2xl">
-              Book certified specialists for AC servicing, emergency plumbing, electrical repairs, and deep home cleaning. Transparent BDT pricing, GPS neighborhood dispatch, and 30-day warranty.
+              Browse local services, compare catalogue details, and choose a booking time that works for you.
             </p>
 
             {/* Quick search bar */}
@@ -118,20 +105,22 @@ export default function Home() {
             <div className="pt-4 grid grid-cols-2 sm:grid-cols-3 gap-3 text-xs text-neutral-300">
               <div className="flex items-center gap-2">
                 <ShieldCheck className="w-4 h-4 text-emerald-400 shrink-0" />
-                <span>NID Verified Technicians</span>
+                <span>Choose from listed services</span>
               </div>
               <div className="flex items-center gap-2">
                 <Clock className="w-4 h-4 text-emerald-400 shrink-0" />
-                <span>60-Min Emergency Response</span>
+                <span>Select a convenient time</span>
               </div>
               <div className="flex items-center gap-2 col-span-2 sm:col-span-1">
                 <CheckCircle className="w-4 h-4 text-emerald-400 shrink-0" />
-                <span>30-Day Work Warranty</span>
+                <span>Manage bookings in your account</span>
               </div>
             </div>
           </div>
         </div>
       </section>
+
+      <AISmartAssistant />
 
       {/* Popular Categories Grid */}
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -141,7 +130,7 @@ export default function Home() {
               {t('popularCategories')}
             </h2>
             <p className="text-xs sm:text-sm text-neutral-500 mt-1">
-              Select from Dhaka's most requested household services with transparent starting rates.
+              Explore the services currently listed in Shebora.
             </p>
           </div>
           <Link
@@ -161,15 +150,12 @@ export default function Home() {
               className="bg-white p-4 rounded-xl border border-neutral-200 hover:border-emerald-500 hover:shadow-md transition-all group flex flex-col justify-between"
             >
               <div>
-                <div className="text-2xl mb-2">{cat.icon}</div>
+              <div className={`mb-3 flex h-10 w-10 items-center justify-center rounded-xl ${cat.color}`}><cat.icon className="h-5 w-5" aria-hidden="true" /></div>
                 <h3 className="font-bold text-sm text-neutral-800 group-hover:text-emerald-700 transition-colors">
                   {lang === 'bn' ? cat.bn : cat.name}
                 </h3>
               </div>
-              <div className="mt-3 pt-2 border-t border-neutral-100 flex items-baseline justify-between">
-                <span className="text-[10px] text-neutral-400 uppercase font-semibold">Starts</span>
-                <span className="text-xs font-extrabold text-neutral-900">৳{cat.price}</span>
-              </div>
+              <div className="mt-3 pt-2 border-t border-neutral-100 text-xs font-semibold text-emerald-800">Browse services <ArrowRight className="inline h-3 w-3" /></div>
             </Link>
           ))}
         </div>
@@ -181,13 +167,13 @@ export default function Home() {
           <div className="max-w-2xl mb-6">
             <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-500/20 text-emerald-400 text-xs font-bold mb-2">
               <Compass className="w-3.5 h-3.5" />
-              Live Dhaka Service Radar
+              Service coverage
             </div>
             <h2 className="text-2xl sm:text-3xl font-black tracking-tight">
-              Approved Technicians Near Your Neighborhood
+              Find services around your neighborhood
             </h2>
             <p className="text-xs sm:text-sm text-neutral-300 mt-2">
-              Locate background-verified technicians in Gulshan, Dhanmondi, Uttara, Mirpur, and surrounding zones. Click on any technician pin to book directly or test service radius.
+              Explore the service areas shown in the marketplace. Availability depends on the service and booking details.
             </p>
           </div>
 
@@ -201,8 +187,7 @@ export default function Home() {
 
           <div className="mt-6 flex flex-wrap items-center justify-between gap-4 text-xs text-neutral-400">
             <div className="flex items-center gap-4">
-              <span>● <strong className="text-neutral-200">16+</strong> Dhaka Zones Covered</span>
-              <span>● <strong className="text-neutral-200">No Advance</strong> Payment Required</span>
+              <span>Browse service locations</span>
             </div>
             <Link
               to="/map"
@@ -220,10 +205,10 @@ export default function Home() {
         <div className="flex items-center justify-between mb-8">
           <div>
             <h2 className="text-2xl font-black text-neutral-900 tracking-tight">
-              Top Booked Services
+              Services in the catalogue
             </h2>
             <p className="text-xs sm:text-sm text-neutral-500 mt-1">
-              Guaranteed doorstep service with genuine replacement parts and transparent invoicing.
+              View service information, starting rates, areas, and booking options.
             </p>
           </div>
           <Link to="/services" className="text-xs font-bold text-emerald-700 hover:underline">
@@ -240,11 +225,11 @@ export default function Home() {
               <div>
                 <div className="h-44 w-full relative overflow-hidden bg-neutral-100">
                   <img
-                    src={service.image}
+                    src={resolveServiceImage(service.image)}
                     alt={service.name}
                     className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                     onError={(e) => {
-                      e.target.src = '/src/assets/why_choose_us/service-1.jpg';
+                      e.currentTarget.src = defaultServiceImage;
                     }}
                   />
                   <div className="absolute top-3 left-3 bg-white/95 backdrop-blur-xs px-2.5 py-1 rounded-md text-xs font-bold text-neutral-800 shadow-sm">
@@ -277,9 +262,9 @@ export default function Home() {
 
               <div className="p-5 pt-0 border-t border-neutral-100 mt-2 flex items-center justify-between">
                 <div>
-                  <span className="text-[10px] text-neutral-400 uppercase font-semibold block">Fixed Rate</span>
+                  <span className="text-[10px] text-neutral-400 uppercase font-semibold block">Starting at</span>
                   <span className="text-base font-extrabold text-neutral-900">
-                    ৳{service.basePrice} <span className="text-[11px] font-normal text-neutral-500">/ {service.priceUnit}</span>
+                    ৳{getServiceStartingOption(service.category, service.basePrice, service.priceUnit).price.toLocaleString('en-BD')} <span className="text-[11px] font-normal text-neutral-500">/ {getServiceStartingOption(service.category, service.basePrice, service.priceUnit).unit}</span>
                   </span>
                 </div>
 
@@ -304,14 +289,14 @@ export default function Home() {
       </section>
 
       {/* Why Choose Shebora Section (Reusing original assets) */}
-      <section className="bg-neutral-100/70 border-y border-neutral-200 py-16">
+      <section className="why-choose-section bg-neutral-100/70 border-y border-neutral-200 py-16">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center max-w-2xl mx-auto mb-12">
             <h2 className="text-2xl sm:text-3xl font-black text-neutral-900 tracking-tight">
               {t('whyChooseUs')}
             </h2>
             <p className="text-xs sm:text-sm text-neutral-500 mt-2">
-              We eliminate Dhaka's common home repair headaches with verified standards and customer protections.
+              Browse services, choose a time, and manage your request from your account.
             </p>
           </div>
 
@@ -320,9 +305,9 @@ export default function Home() {
               <div className="w-12 h-12 rounded-xl bg-emerald-100 text-emerald-800 flex items-center justify-center font-bold">
                 <ShieldCheck className="w-6 h-6" />
               </div>
-              <h3 className="font-bold text-base text-neutral-900">NID & Police Verified</h3>
+              <h3 className="font-bold text-base text-neutral-900">Browse service options</h3>
               <p className="text-xs text-neutral-600 leading-relaxed">
-                Every service professional undergoes national ID verification, background checks, and trade skill assessment before deployment.
+                Review the service descriptions and catalogue details before choosing an option.
               </p>
             </div>
 
@@ -330,9 +315,9 @@ export default function Home() {
               <div className="w-12 h-12 rounded-xl bg-teal-100 text-teal-800 flex items-center justify-center font-bold">
                 <Award className="w-6 h-6" />
               </div>
-              <h3 className="font-bold text-base text-neutral-900">30-Day Service Guarantee</h3>
+              <h3 className="font-bold text-base text-neutral-900">Choose a time</h3>
               <p className="text-xs text-neutral-600 leading-relaxed">
-                If the repaired appliance or fixture acts up within 30 days, we send a technician back to inspect and resolve it free of charge.
+                Select an available date and time when placing a booking request.
               </p>
             </div>
 
@@ -340,9 +325,9 @@ export default function Home() {
               <div className="w-12 h-12 rounded-xl bg-amber-100 text-amber-800 flex items-center justify-center font-bold">
                 <Clock className="w-6 h-6" />
               </div>
-              <h3 className="font-bold text-base text-neutral-900">Punctual Arrival</h3>
+              <h3 className="font-bold text-base text-neutral-900">Add your location</h3>
               <p className="text-xs text-neutral-600 leading-relaxed">
-                Technicians are dispatched from your nearest Dhaka zone so you don't spend hours waiting in traffic jams.
+                Provide a service address and area so your request has the information needed for service.
               </p>
             </div>
 
@@ -350,81 +335,33 @@ export default function Home() {
               <div className="w-12 h-12 rounded-xl bg-blue-100 text-blue-800 flex items-center justify-center font-bold">
                 <CheckCircle className="w-6 h-6" />
               </div>
-              <h3 className="font-bold text-base text-neutral-900">Transparent BDT Billing</h3>
+              <h3 className="font-bold text-base text-neutral-900">Track your request</h3>
               <p className="text-xs text-neutral-600 leading-relaxed">
-                No arbitrary bargaining on your doorstep. Detailed digital invoices with itemized labor and genuine parts cost.
+                Sign in to see booking details and status updates associated with your account.
               </p>
             </div>
           </div>
         </div>
       </section>
 
-      {/* Real Dhaka Customer Reviews */}
-      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="text-center max-w-xl mx-auto mb-10">
-          <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-amber-100 text-amber-800 text-xs font-bold mb-2">
-            <Star className="w-3.5 h-3.5 fill-amber-500 text-amber-500" />
-            Verified Dhaka Homeowner Feedback
-          </div>
-          <h2 className="text-2xl font-black text-neutral-900 tracking-tight">
-            What Customers Are Saying
-          </h2>
+      {/* Booking steps */}
+      <section className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+        <div className="mb-6 max-w-2xl">
+          <h2 className="text-2xl font-black tracking-tight text-neutral-900">A simple way to get started</h2>
+          <p className="mt-1 text-sm text-neutral-600">Choose a service and submit the details for your home.</p>
         </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          <div className="bg-white p-6 rounded-2xl border border-neutral-200 shadow-xs space-y-4">
-            <div className="flex items-center gap-1 text-amber-400">
-              {[...Array(5)].map((_, i) => <Star key={i} className="w-4 h-4 fill-amber-400" />)}
+        <div className="grid gap-4 sm:grid-cols-3">
+          {[
+            ['01', 'Choose a service', 'Browse the catalogue or describe the problem to the Smart Assistant.'],
+            ['02', 'Share the details', 'Select a service option, location, and a time for your booking request.'],
+            ['03', 'Manage your booking', 'Sign in to review the booking and follow its status.']
+          ].map(([number, title, description]) => (
+            <div key={number} className="surface-card p-5">
+              <span className="inline-flex h-8 w-8 items-center justify-center rounded-lg bg-emerald-50 text-xs font-bold text-emerald-800">{number}</span>
+              <h3 className="mt-3 text-sm font-bold text-neutral-900">{title}</h3>
+              <p className="mt-1 text-xs leading-5 text-neutral-600">{description}</p>
             </div>
-            <p className="text-xs text-neutral-700 leading-relaxed italic">
-              "Rafiqul bhai arrived at our Uttara apartment within 45 minutes for our master bedroom AC leak. Fixed the drainage and checked the compressor pressure. Very professional behavior."
-            </p>
-            <div className="flex items-center gap-3 pt-2 border-t border-neutral-100">
-              <div className="w-9 h-9 rounded-full bg-emerald-100 text-emerald-800 font-bold flex items-center justify-center text-xs">
-                TA
-              </div>
-              <div>
-                <div className="font-bold text-xs text-neutral-900">Tanvir Ahmed</div>
-                <div className="text-[11px] text-neutral-400">Sector 3, Uttara</div>
-              </div>
-            </div>
-          </div>
-
-          <div className="bg-white p-6 rounded-2xl border border-neutral-200 shadow-xs space-y-4">
-            <div className="flex items-center gap-1 text-amber-400">
-              {[...Array(5)].map((_, i) => <Star key={i} className="w-4 h-4 fill-amber-400" />)}
-            </div>
-            <p className="text-xs text-neutral-700 leading-relaxed italic">
-              "We booked deep kitchen cleaning through Shebora before Eid. Nusrat apa's crew brought proper steam machines and degreasers. The kitchen tiles look brand new."
-            </p>
-            <div className="flex items-center gap-3 pt-2 border-t border-neutral-100">
-              <div className="w-9 h-9 rounded-full bg-teal-100 text-teal-800 font-bold flex items-center justify-center text-xs">
-                FK
-              </div>
-              <div>
-                <div className="font-bold text-xs text-neutral-900">Farhana Karim</div>
-                <div className="text-[11px] text-neutral-400">Road 11, Banani</div>
-              </div>
-            </div>
-          </div>
-
-          <div className="bg-white p-6 rounded-2xl border border-neutral-200 shadow-xs space-y-4">
-            <div className="flex items-center gap-1 text-amber-400">
-              {[...Array(5)].map((_, i) => <Star key={i} className="w-4 h-4 fill-amber-400" />)}
-            </div>
-            <p className="text-xs text-neutral-700 leading-relaxed italic">
-              "Had a major water line valve burst in Dhanmondi. Khorshed Alam bhai came with the replacement brass fittings and fixed it cleanly without damaging tiles."
-            </p>
-            <div className="flex items-center gap-3 pt-2 border-t border-neutral-100">
-              <div className="w-9 h-9 rounded-full bg-blue-100 text-blue-800 font-bold flex items-center justify-center text-xs">
-                MR
-              </div>
-              <div>
-                <div className="font-bold text-xs text-neutral-900">Mahmudur Rahman</div>
-                <div className="text-[11px] text-neutral-400">Road 8A, Dhanmondi</div>
-              </div>
-            </div>
-          </div>
+          ))}
         </div>
       </section>
 
@@ -433,10 +370,10 @@ export default function Home() {
         <div className="bg-emerald-800 rounded-3xl p-8 lg:p-12 text-white flex flex-col md:flex-row items-center justify-between gap-6 shadow-xl">
           <div className="space-y-2 text-center md:text-left">
             <h2 className="text-2xl sm:text-3xl font-black tracking-tight">
-              Need quick home repair in Dhaka right now?
+              Need help with a home service?
             </h2>
             <p className="text-xs sm:text-sm text-emerald-100 max-w-xl">
-              Pin your location on our live map or select an available slot. Technicians available 7 days a week.
+              Browse the catalogue and start a booking with your service details and preferred time.
             </p>
           </div>
           <div className="flex flex-wrap items-center gap-3">

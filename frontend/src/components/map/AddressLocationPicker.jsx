@@ -1,7 +1,7 @@
-import React, { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import L from 'leaflet';
 import { DHAKA_CENTER, DHAKA_NEIGHBORHOODS, getClosestNeighborhood } from '../../utils/geo.js';
-import { MapPin, Navigation, Info, CheckCircle2 } from 'lucide-react';
+import { MapPin, Navigation, Info } from 'lucide-react';
 
 export default function AddressLocationPicker({
   value = {},

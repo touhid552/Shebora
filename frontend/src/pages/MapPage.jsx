@@ -1,9 +1,9 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { useSearchParams, Link } from 'react-router-dom';
 import { api } from '../services/api.js';
 import DhakaInteractiveMap from '../components/map/DhakaInteractiveMap.jsx';
-import { DHAKA_CENTER, DHAKA_NEIGHBORHOODS } from '../utils/geo.js';
-import { MapPin, Navigation, Star, Phone, ShieldCheck, ArrowRight, ExternalLink } from 'lucide-react';
+import { DHAKA_CENTER } from '../utils/geo.js';
+import { MapPin, Star, ArrowRight, ExternalLink } from 'lucide-react';
 
 export default function MapPage() {
   const [searchParams] = useSearchParams();
