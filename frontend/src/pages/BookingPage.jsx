@@ -288,21 +288,21 @@ const totalAmount = baseRate + emergencyFee + platformFee; // Platform fee is in
                 {selectedPackage && selectedPackage.variants.length > 1 && (
                   <div className="flex flex-wrap gap-2">
                     {selectedPackage.variants.map(variant => (
-                      <button key={variant.id} type="button" onClick={() => setSelectedVariantId(variant.id)} className={`px-3 py-2 rounded-lg border text-xs ${selectedVariant?.id === variant.id ? 'border-emerald-700 bg-emerald-50 font-bold text-emerald-800 dark:border-emerald-500 dark:bg-emerald-950 dark:text-emerald-200' : 'border-neutral-200 text-neutral-600 dark:border-neutral-700 dark:text-neutral-300'}`}>
+                      <button key={variant.id} type="button" onClick={() => setSelectedVariantId(variant.id)} className={`whitespace-nowrap px-3 py-2 rounded-lg border text-xs ${selectedVariant?.id === variant.id ? 'border-emerald-700 bg-emerald-50 font-bold text-emerald-800 dark:border-emerald-500 dark:bg-emerald-950 dark:text-emerald-200' : 'border-neutral-200 text-neutral-700 dark:border-neutral-700 dark:text-neutral-300'}`}>
                         {variant.label} &#183; &#2547; {variant.price.toLocaleString('en-BD')}
                       </button>
                     ))}
                   </div>
                 )}
 
-                <div className="flex items-center justify-between rounded-xl border border-neutral-200 bg-neutral-50 p-3 dark:border-neutral-700 dark:bg-neutral-900">
+                <div className="flex flex-col gap-3 rounded-xl border border-neutral-200 bg-neutral-50 p-3 dark:border-neutral-700 dark:bg-neutral-900 sm:flex-row sm:items-center sm:justify-between">
                   <div>
                     <div className="text-xs font-bold text-neutral-900 dark:text-white">{selectedPackage?.name}</div>
                     <div className="text-[11px] text-neutral-500 dark:text-neutral-300">{selectedVariant?.label} &#183; &#2547; {selectedVariant?.price?.toLocaleString('en-BD')} each</div>
                   </div>
-                  <div className="flex items-center gap-3">
+                  <div className="flex flex-wrap items-center gap-3">
                     <button type="button" aria-label="Decrease quantity" onClick={() => setQuantity(value => Math.max(1, value - 1))} className="h-8 w-8 rounded-full border border-neutral-300 bg-white font-bold text-neutral-900 dark:border-neutral-600 dark:bg-neutral-800 dark:text-white">−</button>
-                    <span className="min-w-4 text-center text-sm font-bold">{quantity}</span>
+                    <span className="min-w-4 text-center text-sm font-bold text-neutral-900 dark:text-white">{quantity}</span>
                     <button type="button" aria-label="Increase quantity" onClick={() => setQuantity(value => Math.min(10, value + 1))} className="h-8 w-8 rounded-full border border-neutral-300 bg-white font-bold text-neutral-900 dark:border-neutral-600 dark:bg-neutral-800 dark:text-white">+</button>
                     <strong className="text-sm text-emerald-700 dark:text-emerald-300">BDT {baseRate.toLocaleString('en-BD')}</strong>
                   </div>

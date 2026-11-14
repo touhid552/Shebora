@@ -3,6 +3,31 @@ import { dbStore } from '../config/db.js';
 import { filterEligibleProviders } from '../services/geoService.js';
 import { isValidStatusTransition } from '../services/pricingService.js';
 
+function getJobsVisibleToProvider(provider) {
+  const assignedJobs = dbStore.getBookings({ providerId: provider.id });
+  if (provider.approvalStatus !== 'approved' || provider.isAvailable !== true) {
+    return assignedJobs;
+  }
+
+  const broadcastJobs = dbStore.getBookings({ status: 'requested' }).filter(booking => {
+    if (booking.providerId) return false;
+    const service = dbStore.getServiceById(booking.serviceId);
+    if (!service || !booking.address) return false;
+
+    return filterEligibleProviders(
+      [provider],
+      booking.address.lat,
+      booking.address.lng,
+      service.category,
+      null,
+      { requireAvailability: true, serviceAreas: service.serviceAreas, area: booking.address.area }
+    ).length > 0;
+  });
+
+  return [...assignedJobs, ...broadcastJobs]
+    .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+}
+
 /**
  * Public/Customer: Get approved providers eligible for map and booking
  */
@@ -126,7 +151,7 @@ export function getMyProviderProfile(req, res) {
       });
     }
 
-    const jobs = dbStore.getBookings({ providerId: provider.id });
+    const jobs = getJobsVisibleToProvider(provider);
     const pendingJobs = jobs.filter(j => j.status === 'requested');
     const activeJobs = jobs.filter(j => ['accepted', 'on_the_way', 'arrived', 'in_progress'].includes(j.status));
     const completedJobs = jobs.filter(j => j.status === 'completed');
@@ -162,7 +187,7 @@ export function getProviderJobs(req, res) {
     }
 
     const { status } = req.query;
-    let jobs = dbStore.getBookings({ providerId: provider.id });
+    let jobs = getJobsVisibleToProvider(provider);
 
     if (status && status !== 'all') {
       jobs = jobs.filter(j => j.status === status);
@@ -192,13 +217,62 @@ export function updateJobStatus(req, res) {
 
     const { bookingId } = req.params;
     const { status, note } = req.body;
+    let claimedUnassignedBooking = false;
 
     const booking = dbStore.getBookingById(bookingId);
     if (!booking) {
       return res.status(404).json({ success: false, message: 'Booking not found.' });
     }
 
-    if (booking.providerId !== provider.id) {
+    if (status === 'accepted') {
+      if (booking.status !== 'requested') {
+        return res.status(409).json({
+          success: false,
+          message: `This booking is no longer available to accept (current status: ${booking.status}).`
+        });
+      }
+
+      if (booking.providerId && booking.providerId !== provider.id) {
+        return res.status(409).json({
+          success: false,
+          message: 'This booking has already been assigned to another technician.'
+        });
+      }
+
+      const service = dbStore.getServiceById(booking.serviceId);
+      const eligible = service && booking.address && filterEligibleProviders(
+        [provider],
+        booking.address.lat,
+        booking.address.lng,
+        service.category,
+        null,
+        { requireAvailability: true, serviceAreas: service.serviceAreas, area: booking.address.area }
+      );
+      if (!eligible?.length) {
+        return res.status(403).json({
+          success: false,
+          message: 'You must be approved, available, and cover this service category, area, and location to accept the booking.'
+        });
+      }
+
+      if (!booking.providerId) {
+        const claimedBooking = dbStore.claimRequestedBooking(booking.id, provider);
+        if (!claimedBooking) {
+          return res.status(409).json({
+            success: false,
+            message: 'This booking was just accepted by another technician.'
+          });
+        }
+        claimedUnassignedBooking = true;
+      } else {
+        booking.status = 'accepted';
+        booking.timeline.push({
+          status: 'accepted',
+          timestamp: new Date().toISOString(),
+          note: note || `Accepted by ${provider.name}`
+        });
+      }
+    } else if (booking.providerId !== provider.id) {
       return res.status(403).json({
         success: false,
         message: 'You are not the designated provider for this booking.'
@@ -206,19 +280,21 @@ export function updateJobStatus(req, res) {
     }
 
     // Validate legal state transition on server
-    if (!isValidStatusTransition(booking.status, status)) {
+    if (status !== 'accepted' && !isValidStatusTransition(booking.status, status)) {
       return res.status(400).json({
         success: false,
         message: `Illegal state transition from "${booking.status}" to "${status}".`
       });
     }
 
-    booking.status = status;
-    booking.timeline.push({
-      status,
-      timestamp: new Date().toISOString(),
-      note: note || `Status updated to ${status} by technician`
-    });
+    if (status !== 'accepted') {
+      booking.status = status;
+      booking.timeline.push({
+        status,
+        timestamp: new Date().toISOString(),
+        note: note || `Status updated to ${status} by technician`
+      });
+    }
 
     // If completed, update provider completedJobs & totalEarnings
     if (status === 'completed') {
@@ -246,7 +322,9 @@ export function updateJobStatus(req, res) {
 
     return res.status(200).json({
       success: true,
-      message: `Job status updated to ${status}.`,
+      message: claimedUnassignedBooking
+        ? 'Booking accepted and assigned to you.'
+        : `Job status updated to ${status}.`,
       data: booking
     });
   } catch (error) {

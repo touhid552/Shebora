@@ -18,7 +18,7 @@ test('1. Pricing Service: Standard booking calculation', () => {
   assert.equal(result.materialsCost, 0);
   assert.equal(result.emergencyFee, 0);
   assert.equal(result.distanceSurcharge, 0);
-  assert.equal(result.totalAmount, 1200);
+  assert.equal(result.totalAmount, 1320); // Subtotal plus the 10% platform fee
   assert.equal(result.platformFee, 120); // 10%
   assert.equal(result.providerEarnings, 1080); // 90%
 });
@@ -35,7 +35,7 @@ test('2. Pricing Service: Emergency night surcharge & extra distance fee', () =>
   assert.equal(result.materialsCost, 500);
   assert.equal(result.emergencyFee, 200);
   assert.equal(result.distanceSurcharge, 100);
-  assert.equal(result.totalAmount, 1800);
+  assert.equal(result.totalAmount, 1980); // Subtotal plus the 10% platform fee
   assert.equal(result.platformFee, 180);
   assert.equal(result.providerEarnings, 1620);
 });

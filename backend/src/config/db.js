@@ -597,6 +597,25 @@ class SheboraDataStore {
     return null;
   }
 
+  // Synchronous compare-and-claim for an unassigned requested booking.
+  // No await occurs between the availability check and assignment.
+  claimRequestedBooking(id, provider) {
+    const booking = this.getBookingById(id);
+    if (!booking || booking.status !== 'requested' || booking.providerId) return null;
+
+    booking.providerId = provider.id;
+    booking.providerName = provider.name;
+    booking.providerPhone = provider.phone || '';
+    booking.status = 'accepted';
+    booking.timeline.push({
+      status: 'accepted',
+      timestamp: new Date().toISOString(),
+      note: `Accepted by ${provider.name}`
+    });
+
+    return booking;
+  }
+
   addReview(review) {
     this.reviews.unshift(review);
     // Mark booking as reviewed

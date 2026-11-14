@@ -76,17 +76,60 @@ export function getClosestNeighborhood(lat, lng) {
 /**
  * Filters approved providers eligible for a specific service location and radius
  */
-export function filterEligibleProviders(providers, customerLat, customerLng, category = null, maxRadiusKm = null) {
+function normalizeArea(area) {
+  return String(area || '')
+    .trim()
+    .toLowerCase()
+    .replace(/[-_]+/g, ' ')
+    .replace(/\s+/g, ' ')
+    .replace(/\s+\d+$/, '');
+}
+
+/**
+ * Checks whether a service covers the booking's named area. Names such as
+ * "Gulshan-2" map to "Gulshan"; unrecognized labels use the booking pin's
+ * closest known Dhaka neighborhood.
+ */
+export function isServiceAreaCovered(serviceAreas, area, lat, lng) {
+  if (!Array.isArray(serviceAreas) || serviceAreas.length === 0) return true;
+
+  const normalizedArea = normalizeArea(area);
+  const knownArea = DHAKA_NEIGHBORHOODS.find(neighborhood =>
+    normalizeArea(neighborhood.area) === normalizedArea
+  );
+  const effectiveArea = knownArea?.area || getClosestNeighborhood(lat, lng).area;
+  const effectiveAreaName = normalizeArea(effectiveArea);
+
+  return serviceAreas.some(serviceArea => normalizeArea(serviceArea) === effectiveAreaName);
+}
+
+/**
+ * Filters approved providers by service, availability, service-area coverage,
+ * and driving radius. Availability and service-area constraints are opt-in so
+ * existing public provider discovery can retain its current behavior.
+ */
+export function filterEligibleProviders(
+  providers,
+  customerLat,
+  customerLng,
+  category = null,
+  maxRadiusKm = null,
+  { requireAvailability = false, serviceAreas = null, area = null } = {}
+) {
   return providers
     .filter(provider => {
       // Must be approved by admin
       if (provider.approvalStatus !== "approved") return false;
+      if (requireAvailability && provider.isAvailable !== true) return false;
       // Must have valid coordinates
       if (!provider.location || typeof provider.location.lat !== 'number' || typeof provider.location.lng !== 'number') {
         return false;
       }
       // Must match category if specified
       if (category && (!provider.categories || !provider.categories.includes(category))) {
+        return false;
+      }
+      if (serviceAreas && !isServiceAreaCovered(serviceAreas, area, customerLat, customerLng)) {
         return false;
       }
       return true;

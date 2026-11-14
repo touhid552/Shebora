@@ -55,7 +55,7 @@ export default function Home() {
     <div className="space-y-12 pb-12">
       {/* Hero Banner with Dhaka backdrop and search */}
       <section className="home-hero relative overflow-hidden py-12 text-white sm:py-16">
-        <img src="/images/services/electrical-hazards.webp" alt="" aria-hidden="true" className="absolute inset-0 h-full w-full object-cover object-center opacity-20 lg:inset-y-0 lg:left-auto lg:right-0 lg:w-[52%] lg:opacity-100" />
+        <img src="/images/home-technician.jpg" alt="" aria-hidden="true" className="absolute inset-0 h-full w-full object-cover object-[center_28%] opacity-20 lg:inset-y-0 lg:left-auto lg:right-0 lg:w-[52%] lg:opacity-100" />
         <div className="absolute inset-0 bg-gradient-to-r from-neutral-900 via-neutral-900/90 to-neutral-900/55 lg:from-neutral-900 lg:via-neutral-900/95 lg:to-transparent" />
         {/* Subtle decorative glow */}
         <div className="absolute top-0 right-0 -mr-20 -mt-20 w-96 h-96 rounded-full bg-slate-300/5 blur-3xl pointer-events-none"></div>
