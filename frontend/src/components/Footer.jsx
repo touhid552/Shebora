@@ -1,108 +1,67 @@
-import React from 'react';
 import { Link } from 'react-router-dom';
-import { Wrench, ShieldCheck, MapPin, Phone, Mail, Clock } from 'lucide-react';
+import { MapPin, Wrench } from 'lucide-react';
 import { useLanguage } from '../context/LanguageContext.jsx';
 
+const serviceLinks = [
+  ['AC Repair', 'AC%20Repair'],
+  ['Plumbing', 'Plumbing'],
+  ['Electrical Repair', 'Electrical%20Repair'],
+  ['Home Cleaning', 'Home%20Cleaning'],
+  ['Appliance Repair', 'Appliance%20Repair'],
+  ['Painting', 'Painting']
+];
+
 export default function Footer() {
-  const { t } = useLanguage();
+  const { lang } = useLanguage();
+  const isBangla = lang === 'bn';
 
   return (
-    <footer className="bg-neutral-900 text-neutral-300 border-t border-neutral-800 mt-16">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-8">
-          {/* Brand Info */}
-          <div className="lg:col-span-2 space-y-4">
-            <Link to="/" className="flex items-center gap-2.5 group">
-              <div className="w-9 h-9 rounded-xl bg-white p-0.5 flex items-center justify-center overflow-hidden border border-neutral-700 shadow-xs">
-                <img
-                  src="/assets/aistudio/image_cc3069dd.png"
-                  alt="Shebora Logo"
-                  className="w-full h-full object-contain"
-                />
-              </div>
-              <span className="text-xl font-black tracking-tight text-white">SHEBORA</span>
+    <footer className="mt-16 bg-[#102a24] text-emerald-50">
+      <div className="mx-auto max-w-7xl px-4 py-10 sm:px-6 lg:px-8 lg:py-12">
+        <div className="grid gap-9 sm:grid-cols-2 lg:grid-cols-[1.4fr_.8fr_.9fr_1fr] lg:gap-12">
+          <div>
+            <Link to="/" aria-label="Shebora home" className="inline-flex items-center gap-2.5">
+              <span className="flex h-10 w-10 items-center justify-center overflow-hidden rounded-xl bg-white p-0.5">
+                <img src="/assets/brand/shebora-logo.png" alt="" className="h-full w-full object-contain" />
+              </span>
+              <span className="text-xl font-black tracking-tight text-white">Shebora</span>
             </Link>
-            <p className="text-xs text-neutral-400 leading-relaxed max-w-sm">
-              Dhaka's verified home services marketplace. We connect homeowners and businesses with background-checked, skilled technicians for air conditioning, plumbing, electrical, home cleaning, and appliance repairs.
+            <p className="mt-4 max-w-sm text-sm leading-6 text-emerald-100/70">
+              {isBangla
+                ? '\u09A2\u09BE\u0995\u09BE\u09AF\u09BC \u09AC\u09BE\u09B8\u09BE\u09B0 \u09AA\u09CD\u09B0\u09AF\u09BC\u09CB\u099C\u09A8\u09C7 \u09A8\u09BF\u09B0\u09CD\u09AD\u09B0\u09AF\u09CB\u0997\u09CD\u09AF \u09B9\u09CB\u09AE \u09B8\u09BE\u09B0\u09CD\u09AD\u09BF\u09B8 \u09AC\u09C1\u0995 \u0995\u09B0\u09C1\u09A8\u0964'
+                : 'Book trusted home services across Dhaka. Browse the catalogue, choose a time, and follow your booking from one place.'}
             </p>
-            <div className="space-y-1.5 text-xs text-neutral-400">
-              <div className="flex items-center gap-2">
-                <Phone className="w-4 h-4 text-emerald-400" />
-                <span>Customer Care: <strong>09612-SHEBORA (743267)</strong></span>
-              </div>
-              <div className="flex items-center gap-2">
-                <Mail className="w-4 h-4 text-emerald-400" />
-                <span>support@shebora.bd</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <Clock className="w-4 h-4 text-emerald-400" />
-                <span>Technician Dispatch: 7:00 AM – 11:00 PM (Everyday)</span>
-              </div>
-            </div>
+
           </div>
 
-          {/* Service Categories */}
           <div>
-            <h4 className="text-xs font-bold text-white uppercase tracking-wider mb-3">
-              Home Services
-            </h4>
-            <ul className="space-y-2 text-xs text-neutral-400">
-              <li><Link to="/services?category=AC%20Repair" className="hover:text-emerald-400">AC Repair & Servicing</Link></li>
-              <li><Link to="/services?category=Plumbing" className="hover:text-emerald-400">Plumbing & Sanitary Solutions</Link></li>
-              <li><Link to="/services?category=Electrical%20Repair" className="hover:text-emerald-400">Electrical & Circuit Wiring</Link></li>
-              <li><Link to="/services?category=Home%20Cleaning" className="hover:text-emerald-400">Deep Home Cleaning</Link></li>
-              <li><Link to="/services?category=Appliance%20Repair" className="hover:text-emerald-400">Refrigerator & Washing Machine</Link></li>
-              <li><Link to="/services?category=Painting" className="hover:text-emerald-400">Wall Painting & Damp Proofing</Link></li>
+            <h2 className="text-xs font-bold uppercase tracking-[.16em] text-white">{isBangla ? '\u09B8\u09C7\u09AC\u09BE' : 'Services'}</h2>
+            <ul className="mt-4 space-y-2.5 text-sm text-emerald-100/70">
+              {serviceLinks.map(([label, category]) => <li key={category}><Link className="transition hover:text-white" to={`/services?category=${category}`}>{label}</Link></li>)}
             </ul>
           </div>
 
-          {/* Dhaka Service Areas */}
           <div>
-            <h4 className="text-xs font-bold text-white uppercase tracking-wider mb-3 flex items-center gap-1.5">
-              <MapPin className="w-3.5 h-3.5 text-emerald-400" />
-              Dhaka Coverage
-            </h4>
-            <ul className="grid grid-cols-2 gap-x-2 gap-y-1.5 text-xs text-neutral-400">
-              <li>Gulshan 1 & 2</li>
-              <li>Banani</li>
-              <li>Dhanmondi</li>
-              <li>Uttara (Sec 1-14)</li>
-              <li>Mirpur & DOHS</li>
-              <li>Mohammadpur</li>
-              <li>Bashundhara R/A</li>
-              <li>Baridhara</li>
-              <li>Badda</li>
-              <li>Motijheel</li>
-              <li>Tejgaon</li>
-              <li>Lalbagh</li>
+            <h2 className="text-xs font-bold uppercase tracking-[.16em] text-white">{isBangla ? '\u09B6\u09C7\u09AC\u09CB\u09B0\u09BE' : 'Explore Shebora'}</h2>
+            <ul className="mt-4 space-y-2.5 text-sm text-emerald-100/70">
+              <li><Link className="transition hover:text-white" to="/services">{isBangla ? '\u09B8\u09AC \u09B8\u09C7\u09AC\u09BE \u09A6\u09C7\u0996\u09C1\u09A8' : 'Browse services'}</Link></li>
+              <li><Link className="transition hover:text-white" to="/map">{isBangla ? '\u09A2\u09BE\u0995\u09BE \u09AE\u09CD\u09AF\u09BE\u09AA' : 'Dhaka coverage map'}</Link></li>
+              <li><Link className="transition hover:text-white" to="/book-service">{isBangla ? '\u09B8\u09BE\u09B0\u09CD\u09AD\u09BF\u09B8 \u09AC\u09C1\u0995 \u0995\u09B0\u09C1\u09A8' : 'Book a service'}</Link></li>
+              <li><Link className="transition hover:text-white" to="/provider/login">{isBangla ? '\u09AA\u09CD\u09B0\u09CB\u09AD\u09BE\u0987\u09A1\u09BE\u09B0 \u09B2\u0997\u0987\u09A8' : 'Provider sign in'}</Link></li>
+              <li><Link className="transition hover:text-white" to="/register">{isBangla ? '\u09AA\u09CD\u09B0\u09CB\u09AD\u09BE\u0987\u09A1\u09BE\u09B0 \u09B9\u09BF\u09B8\u09C7\u09AC\u09C7 \u09AF\u09CB\u0997 \u09A6\u09BF\u09A8' : 'Become a provider'}</Link></li>
             </ul>
           </div>
 
-          {/* Safety & Portal Links */}
           <div>
-            <h4 className="text-xs font-bold text-white uppercase tracking-wider mb-3 flex items-center gap-1.5">
-              <ShieldCheck className="w-3.5 h-3.5 text-emerald-400" />
-              Safety & Governance
-            </h4>
-            <ul className="space-y-2 text-xs text-neutral-400">
-              <li><Link to="/map" className="hover:text-emerald-400">Live Coverage Map</Link></li>
-              <li><Link to="/register" className="hover:text-emerald-400">Register as Technician</Link></li>
-              <li><Link to="/dashboard/customer" className="hover:text-emerald-400">Customer Bookings & Invoices</Link></li>
-              <li><Link to="/dashboard/admin" className="hover:text-emerald-400">Admin Verification Portal</Link></li>
-              <li className="pt-2 text-[11px] text-neutral-500">
-                All prices quoted in Bangladeshi Taka (৳). 30-day workmanship warranty included on eligible services.
-              </li>
-            </ul>
+            <h2 className="flex items-center gap-2 text-xs font-bold uppercase tracking-[.16em] text-white"><MapPin className="h-4 w-4 text-emerald-300" />{isBangla ? '\u09A2\u09BE\u0995\u09BE\u09AF\u09BC \u0986\u09AE\u09BE\u09A6\u09C7\u09B0 \u098F\u09B2\u09BE\u0995\u09BE' : 'Dhaka service areas'}</h2>
+            <p className="mt-4 text-sm leading-6 text-emerald-100/70">Open a service listing to check its available Dhaka areas.</p>
+            <Link to="/map" className="mt-4 inline-flex items-center gap-1.5 text-xs font-bold text-emerald-300 transition hover:text-white"><Wrench className="h-3.5 w-3.5" />See service coverage</Link>
           </div>
         </div>
 
-        <div className="border-t border-neutral-800 mt-10 pt-6 flex flex-col sm:flex-row items-center justify-between text-xs text-neutral-500 gap-3">
-          <p>© {new Date().getFullYear()} Shebora Technologies Ltd. Dhaka, Bangladesh. All rights reserved.</p>
-          <div className="flex gap-4">
-            <span className="hover:text-neutral-400">Privacy Policy</span>
-            <span className="hover:text-neutral-400">Terms of Service</span>
-            <span className="hover:text-neutral-400">Provider Agreement</span>
-          </div>
+        <div className="mt-9 flex flex-col gap-2 border-t border-white/10 pt-5 text-[11px] text-emerald-100/55 sm:flex-row sm:items-center sm:justify-between">
+          <p>© {new Date().getFullYear()} Shebora · Dhaka, Bangladesh</p>
+          <p>Prices are shown in Bangladeshi Taka (BDT).</p>
         </div>
       </div>
     </footer>

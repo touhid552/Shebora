@@ -108,5 +108,12 @@ export const api = {
 
   // Notifications
   getNotifications: () => request('/notifications'),
-  markNotificationsRead: () => request('/notifications/mark-read', { method: 'POST' })
+  markNotificationsRead: () => request('/notifications/mark-read', { method: 'POST' }),
+
+  // AI Smart Assistant
+  getAIRecommendation: (problem) =>
+    request('/ai/recommend', {
+      method: 'POST',
+      body: { problem }
+    })
 };

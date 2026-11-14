@@ -92,7 +92,7 @@ export function createService(req, res) {
       priceUnit,
       estimatedDuration,
       warrantyDays: Number(warrantyDays) || 30,
-      image: image || '/src/assets/why_choose_us/service-1.jpg',
+      image: image || '/images/services/ac-repair.jpg',
       rating: 5.0,
       reviewsCount: 0,
       serviceAreas: Array.isArray(serviceAreas) && serviceAreas.length > 0 ? serviceAreas : ["Gulshan", "Dhanmondi", "Uttara", "Mirpur"],

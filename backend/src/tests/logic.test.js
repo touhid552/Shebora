@@ -2,18 +2,9 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 
-import {
-  calculateBookingPrice,
-  isValidStatusTransition,
-  PLATFORM_COMMISSION_RATE
-} from '../services/pricingService.js';
+import { calculateBookingPrice, isValidStatusTransition } from '../services/pricingService.js';
 
-import {
-  calculateDistanceKm,
-  isWithinDhaka,
-  getClosestNeighborhood,
-  filterEligibleProviders
-} from '../services/geoService.js';
+import { calculateDistanceKm, isWithinDhaka, getClosestNeighborhood, filterEligibleProviders } from '../services/geoService.js';
 
 test('1. Pricing Service: Standard booking calculation', () => {
   const result = calculateBookingPrice({

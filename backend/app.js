@@ -1,4 +1,4 @@
-// Shebora Backend Express Application
+﻿// Shebora Backend Express Application
 import express from 'express';
 import cors from 'cors';
 import authRoutes from './src/routes/authRoutes.js';
@@ -8,6 +8,7 @@ import bookingRoutes from './src/routes/bookingRoutes.js';
 import adminRoutes from './src/routes/adminRoutes.js';
 import paymentRoutes from './src/routes/paymentRoutes.js';
 import notificationRoutes from './src/routes/notificationRoutes.js';
+import aiRoutes from './src/routes/aiRoutes.js';
 
 const app = express();
 
@@ -17,8 +18,8 @@ app.use(cors({
   credentials: true
 }));
 
-app.use(express.json({ limit: '10mb' }));
-app.use(express.urlencoded({ extended: true, limit: '10mb' }));
+app.use(express.json({ limit: '12mb' }));
+app.use(express.urlencoded({ extended: true, limit: '12mb' }));
 
 // Request Logging & Security Headers
 app.use((req, res, next) => {
@@ -46,6 +47,7 @@ app.use('/api/bookings', bookingRoutes);
 app.use('/api/admin', adminRoutes);
 app.use('/api/payments', paymentRoutes);
 app.use('/api/notifications', notificationRoutes);
+app.use('/api/ai', aiRoutes);
 
 // 404 for undefined API routes
 app.all('/api/*', (req, res) => {
@@ -66,3 +68,4 @@ app.use((err, req, res, next) => {
 });
 
 export default app;
+

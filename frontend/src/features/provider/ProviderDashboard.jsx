@@ -1,22 +1,8 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { api } from '../../services/api.js';
 import { useAuth } from '../../context/AuthContext.jsx';
 import { useLanguage } from '../../context/LanguageContext.jsx';
-import {
-  Wrench,
-  CheckCircle,
-  Clock,
-  MapPin,
-  ExternalLink,
-  DollarSign,
-  AlertTriangle,
-  Power,
-  ShieldCheck,
-  Star,
-  Compass,
-  Calendar,
-  Phone
-} from 'lucide-react';
+import { CheckCircle, Clock, ExternalLink, AlertTriangle, ShieldCheck, Star, Phone } from 'lucide-react';
 
 export default function ProviderDashboard() {
   const { user } = useAuth();
@@ -102,7 +88,7 @@ export default function ProviderDashboard() {
   }
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
+    <div className="page-shell space-y-7">
       {/* Provider Verification Warning if not yet approved */}
       {!isApproved ? (
         <div className="p-6 rounded-2xl bg-amber-50 border-2 border-amber-300 text-amber-900 space-y-3 shadow-sm">

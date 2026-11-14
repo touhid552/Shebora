@@ -1,24 +1,7 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { api } from '../../services/api.js';
 import { useAuth } from '../../context/AuthContext.jsx';
-import {
-  ShieldCheck,
-  Users,
-  Briefcase,
-  AlertCircle,
-  FileText,
-  DollarSign,
-  CheckCircle,
-  XCircle,
-  PauseCircle,
-  PlayCircle,
-  History,
-  Layers,
-  Search,
-  Filter,
-  Check,
-  X
-} from 'lucide-react';
+import { ShieldCheck, Users, FileText } from 'lucide-react';
 
 export default function AdminDashboard() {
   const { user, isAdmin } = useAuth();
@@ -101,7 +84,7 @@ export default function AdminDashboard() {
   };
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
+    <div className="page-shell space-y-7">
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-neutral-200 pb-5">
         <div>
@@ -490,10 +473,18 @@ export default function AdminDashboard() {
               <div><strong>Operating Base:</strong> {inspectProvider.location?.address}</div>
             </div>
 
-            <div className="p-3 bg-emerald-50 text-emerald-900 text-xs rounded-lg border border-emerald-200 flex items-center gap-2">
-              <CheckCircle className="w-4 h-4 text-emerald-600 shrink-0" />
-              <span>Identity certificate verified against Dhaka Metropolitan Police records.</span>
-            </div>
+            {inspectProvider.verificationDoc?.image ? (
+              <div>
+                <p className="text-xs font-semibold text-neutral-700 mb-2">Uploaded NID image</p>
+                <a href={inspectProvider.verificationDoc.image} target="_blank" rel="noreferrer">
+                  <img src={inspectProvider.verificationDoc.image} alt={`${inspectProvider.name}'s uploaded NID`} className="max-h-72 w-full rounded-xl border border-neutral-200 object-contain bg-neutral-50" />
+                </a>
+              </div>
+            ) : (
+              <div className="p-3 bg-amber-50 text-amber-900 text-xs rounded-lg border border-amber-200">
+                No NID image was uploaded for this provider.
+              </div>
+            )}
 
             <div>
               <label className="block text-xs font-semibold text-neutral-700 mb-1">Administrative Notes:</label>

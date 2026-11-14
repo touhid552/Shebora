@@ -1,25 +1,9 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { api } from '../../services/api.js';
 import { useAuth } from '../../context/AuthContext.jsx';
 import { useLanguage } from '../../context/LanguageContext.jsx';
-import {
-  Wrench,
-  Calendar,
-  Clock,
-  MapPin,
-  Star,
-  FileText,
-  AlertCircle,
-  CheckCircle,
-  XCircle,
-  ArrowRight,
-  ShieldCheck,
-  Phone,
-  MessageSquare,
-  HelpCircle,
-  X
-} from 'lucide-react';
+import { Wrench, Calendar, MapPin, Star, FileText, AlertCircle, ArrowRight, X } from 'lucide-react';
 
 export default function CustomerDashboard() {
   const { user } = useAuth();
@@ -146,7 +130,7 @@ export default function CustomerDashboard() {
   const stepOrder = ['requested', 'accepted', 'on_the_way', 'arrived', 'in_progress', 'completed'];
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
+    <div className="page-shell space-y-7">
       {/* Top Banner */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
@@ -157,7 +141,7 @@ export default function CustomerDashboard() {
             My Service Appointments & Invoices
           </h1>
           <p className="text-xs sm:text-sm text-neutral-500 mt-0.5">
-            Track real-time technician status, inspect digital invoices, submit reviews, and file warranty complaints.
+            Review booking status and invoices, submit feedback, or contact support about a booking.
           </p>
         </div>
 
@@ -413,9 +397,6 @@ export default function CustomerDashboard() {
               </div>
             </div>
 
-            <div className="p-3 rounded-lg bg-emerald-50 text-emerald-900 text-[11px] leading-relaxed">
-              <strong>Warranty Certificate:</strong> This work is insured with 30-day Shebora service guarantee. For claims, call 09612-SHEBORA with your booking reference.
-            </div>
 
             <div className="flex justify-end gap-2 pt-2">
               <button

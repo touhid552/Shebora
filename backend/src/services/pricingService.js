@@ -18,7 +18,7 @@ export function calculateBookingPrice({ basePrice, materialsCost = 0, isNightEme
   const subtotal = safeBase + safeMaterials + emergencyFee + distanceSurcharge;
   const platformFee = Math.round(subtotal * PLATFORM_COMMISSION_RATE);
   const providerEarnings = subtotal - platformFee;
-  const totalAmount = subtotal;
+const totalAmount = subtotal + platformFee;
 
   return {
     baseAmount: safeBase,

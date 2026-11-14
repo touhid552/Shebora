@@ -1,5 +1,5 @@
-import React from 'react';
-import { Routes, Route, Navigate } from 'react-router-dom';
+
+import { Routes, Route, Navigate, useLocation } from 'react-router-dom';
 import RootLayout from '../layouts/RootLayout.jsx';
 import Home from '../pages/Home.jsx';
 import Services from '../pages/Services.jsx';
@@ -15,18 +15,44 @@ import AdminDashboard from '../features/admin/AdminDashboard.jsx';
 import NotFound from '../pages/NotFound.jsx';
 import { useAuth } from '../context/AuthContext.jsx';
 
-// Protected Route wrappers
 function ProtectedRoute({ children, allowedRoles }) {
   const { user, loading } = useAuth();
+  const location = useLocation();
+
   if (loading) {
-    return <div className="p-12 text-center text-xs text-neutral-400">Verifying credentials...</div>;
+    return (
+      <div className="p-12 text-center text-xs text-neutral-400">
+        Verifying credentials...
+      </div>
+    );
   }
+
   if (!user) {
-    return <Navigate to="/login" replace />;
+    const loginPath =
+      allowedRoles?.length === 1
+        ? `/${allowedRoles[0]}/login`
+        : '/login';
+
+    return (
+      <Navigate
+        to={loginPath}
+        state={{ from: location }}
+        replace
+      />
+    );
   }
+
   if (allowedRoles && !allowedRoles.includes(user.role)) {
-    return <Navigate to="/" replace />;
+    const correctDashboard =
+      user.role === 'admin'
+        ? '/dashboard/admin'
+        : user.role === 'provider'
+          ? '/dashboard/provider'
+          : '/dashboard/customer';
+
+    return <Navigate to={correctDashboard} replace />;
   }
+
   return children;
 }
 
@@ -39,8 +65,15 @@ export default function AppRoutes() {
         <Route path="service-details/:id" element={<ServiceDetails />} />
         <Route path="map" element={<MapPage />} />
         <Route path="book-service" element={<BookingPage />} />
+
+        {/* Login Portals */}
         <Route path="login" element={<Login />} />
+        <Route path="customer/login" element={<Login expectedRole="customer" />} />
+        <Route path="provider/login" element={<Login expectedRole="provider" />} />
+        <Route path="admin/login" element={<Login expectedRole="admin" />} />
+
         <Route path="register" element={<Register />} />
+
         <Route
           path="profile"
           element={
@@ -49,22 +82,25 @@ export default function AppRoutes() {
             </ProtectedRoute>
           }
         />
+
         <Route
           path="dashboard/customer"
           element={
-            <ProtectedRoute allowedRoles={['customer', 'admin']}>
+            <ProtectedRoute allowedRoles={['customer']}>
               <CustomerDashboard />
             </ProtectedRoute>
           }
         />
+
         <Route
           path="dashboard/provider"
           element={
-            <ProtectedRoute allowedRoles={['provider', 'admin']}>
+            <ProtectedRoute allowedRoles={['provider']}>
               <ProviderDashboard />
             </ProtectedRoute>
           }
         />
+
         <Route
           path="dashboard/admin"
           element={
@@ -73,6 +109,7 @@ export default function AppRoutes() {
             </ProtectedRoute>
           }
         />
+
         <Route path="*" element={<NotFound />} />
       </Route>
     </Routes>

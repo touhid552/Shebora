@@ -1,6 +1,6 @@
 // Provider Controller - Service Provider Workflows & Geolocation
 import { dbStore } from '../config/db.js';
-import { filterEligibleProviders, calculateDistanceKm } from '../services/geoService.js';
+import { filterEligibleProviders } from '../services/geoService.js';
 import { isValidStatusTransition } from '../services/pricingService.js';
 
 /**

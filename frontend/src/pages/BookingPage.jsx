@@ -1,25 +1,12 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { useSearchParams, useNavigate, Link } from 'react-router-dom';
 import { api } from '../services/api.js';
 import { useAuth } from '../context/AuthContext.jsx';
 import { useLanguage } from '../context/LanguageContext.jsx';
 import AddressLocationPicker from '../components/map/AddressLocationPicker.jsx';
 import { DHAKA_CENTER } from '../utils/geo.js';
-import {
-  Wrench,
-  Calendar,
-  Clock,
-  MapPin,
-  ShieldCheck,
-  CreditCard,
-  DollarSign,
-  CheckCircle2,
-  AlertCircle,
-  ArrowRight,
-  ArrowLeft,
-  User,
-  Star
-} from 'lucide-react';
+import { getServicePackages, getServiceStartingOption } from '../../../shared/servicePackages.js';
+import { Wrench, Calendar, Clock, CheckCircle2, AlertCircle, ArrowRight } from 'lucide-react';
 
 export default function BookingPage() {
   const [searchParams] = useSearchParams();
@@ -40,6 +27,9 @@ export default function BookingPage() {
   // Form State
   const [selectedServiceId, setSelectedServiceId] = useState(preselectedServiceId || '');
   const [selectedProviderId, setSelectedProviderId] = useState(preselectedProviderId || '');
+  const [selectedPackageId, setSelectedPackageId] = useState('');
+  const [selectedVariantId, setSelectedVariantId] = useState('');
+  const [quantity, setQuantity] = useState(1);
   const [scheduledDate, setScheduledDate] = useState(() => {
     const tomorrow = new Date();
     tomorrow.setDate(tomorrow.getDate() + 1);
@@ -86,6 +76,9 @@ export default function BookingPage() {
 
   const selectedService = services.find(s => s.id === selectedServiceId);
   const selectedProvider = providers.find(p => p.id === selectedProviderId);
+  const packages = selectedService ? getServicePackages(selectedService.category) : [];
+  const selectedPackage = packages.find(item => item.id === selectedPackageId) || packages[0];
+  const selectedVariant = selectedPackage?.variants.find(item => item.id === selectedVariantId) || selectedPackage?.variants[0];
 
   // Filter providers matching selected service category
   const eligibleProviders = providers.filter(p => {
@@ -94,11 +87,11 @@ export default function BookingPage() {
   });
 
   // Calculate pricing breakdown
-  const baseRate = selectedService?.basePrice || 1000;
+  const baseRate = (selectedVariant?.price ?? selectedService?.basePrice ?? 1000) * quantity;
   const isNight = scheduledTime.includes('PM') && (scheduledTime.startsWith('10') || scheduledTime.startsWith('11'));
   const emergencyFee = isNight ? 200 : 0;
-  const platformFee = Math.round((baseRate + emergencyFee) * 0.10);
-  const totalAmount = baseRate + emergencyFee; // Platform fee is internal commission
+const platformFee = Math.round((baseRate + emergencyFee) * 0.10);
+const totalAmount = baseRate + emergencyFee + platformFee; // Platform fee is internal commission
 
   const timeSlots = [
     "08:30 AM", "10:00 AM", "11:30 AM", "01:00 PM",
@@ -124,6 +117,9 @@ export default function BookingPage() {
     try {
       const payload = {
         serviceId: selectedServiceId,
+        packageId: selectedPackage?.id,
+        variantId: selectedVariant?.id,
+        quantity,
         providerId: selectedProviderId || null,
         scheduledDate,
         scheduledTime,
@@ -213,7 +209,7 @@ export default function BookingPage() {
   }
 
   return (
-    <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
+    <div className="page-shell max-w-4xl space-y-7">
       {/* Page Heading */}
       <div>
         <div className="flex items-center gap-1.5 text-xs font-bold text-emerald-700 uppercase tracking-wider mb-1">
@@ -250,16 +246,69 @@ export default function BookingPage() {
               </label>
               <select
                 value={selectedServiceId}
-                onChange={(e) => setSelectedServiceId(e.target.value)}
-                className="w-full px-3 py-2.5 bg-neutral-50 border border-neutral-300 rounded-xl text-sm font-semibold text-neutral-800 focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                onChange={(e) => {
+                  setSelectedServiceId(e.target.value);
+                  setSelectedPackageId('');
+                  setSelectedVariantId('');
+                  setQuantity(1);
+                }}
+                className="w-full rounded-xl border border-neutral-300 bg-neutral-50 px-3 py-2.5 text-sm font-semibold text-neutral-800 focus:outline-none focus:ring-2 focus:ring-emerald-500 dark:border-neutral-600 dark:bg-neutral-900 dark:text-neutral-100"
               >
                 {services.map(s => (
                   <option key={s.id} value={s.id}>
-                    {s.name} — BDT {s.basePrice} / {s.priceUnit}
+                    {s.name} &#8212; &#2547;{getServiceStartingOption(s.category, s.basePrice, s.priceUnit).price.toLocaleString('en-BD')} / {getServiceStartingOption(s.category, s.basePrice, s.priceUnit).unit}
                   </option>
                 ))}
               </select>
             </div>
+
+            {selectedService && (
+              <div className="md:col-span-2 space-y-3">
+                <div className="flex items-center justify-between">
+                  <label className="block text-xs font-semibold text-neutral-700">Choose a service package</label>
+                  <span className="text-[11px] text-neutral-500">{packages.length} options</span>
+                </div>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                  {packages.map((servicePackage) => {
+                    const isSelected = selectedPackage?.id === servicePackage.id;
+                    const startsAt = Math.min(...servicePackage.variants.map(item => item.price));
+                    return (
+                      <button key={servicePackage.id} type="button" onClick={() => {
+                        setSelectedPackageId(servicePackage.id);
+                        setSelectedVariantId(servicePackage.variants[0]?.id || '');
+                        setQuantity(1);
+                      }} className={`rounded-xl border p-3 text-left transition-colors ${isSelected ? 'border-emerald-700 bg-emerald-50 text-neutral-900 ring-1 ring-emerald-700 dark:border-emerald-500 dark:bg-emerald-950 dark:text-white dark:ring-emerald-500' : 'border-neutral-200 bg-white text-neutral-900 hover:border-emerald-400 dark:border-neutral-700 dark:bg-neutral-900 dark:text-neutral-100 dark:hover:border-emerald-500'}`}>
+                        <span className="block text-xs font-bold text-neutral-900 dark:text-white">{servicePackage.name}</span>
+                        <span className="mt-1 block text-[11px] text-neutral-500 dark:text-neutral-300">Starts at <strong className="text-emerald-700 dark:text-emerald-300">&#2547;{startsAt.toLocaleString('en-BD')}</strong></span>
+                      </button>
+                    );
+                  })}
+                </div>
+
+                {selectedPackage && selectedPackage.variants.length > 1 && (
+                  <div className="flex flex-wrap gap-2">
+                    {selectedPackage.variants.map(variant => (
+                      <button key={variant.id} type="button" onClick={() => setSelectedVariantId(variant.id)} className={`px-3 py-2 rounded-lg border text-xs ${selectedVariant?.id === variant.id ? 'border-emerald-700 bg-emerald-50 font-bold text-emerald-800 dark:border-emerald-500 dark:bg-emerald-950 dark:text-emerald-200' : 'border-neutral-200 text-neutral-600 dark:border-neutral-700 dark:text-neutral-300'}`}>
+                        {variant.label} &#183; &#2547; {variant.price.toLocaleString('en-BD')}
+                      </button>
+                    ))}
+                  </div>
+                )}
+
+                <div className="flex items-center justify-between rounded-xl border border-neutral-200 bg-neutral-50 p-3 dark:border-neutral-700 dark:bg-neutral-900">
+                  <div>
+                    <div className="text-xs font-bold text-neutral-900 dark:text-white">{selectedPackage?.name}</div>
+                    <div className="text-[11px] text-neutral-500 dark:text-neutral-300">{selectedVariant?.label} &#183; &#2547; {selectedVariant?.price?.toLocaleString('en-BD')} each</div>
+                  </div>
+                  <div className="flex items-center gap-3">
+                    <button type="button" aria-label="Decrease quantity" onClick={() => setQuantity(value => Math.max(1, value - 1))} className="h-8 w-8 rounded-full border border-neutral-300 bg-white font-bold text-neutral-900 dark:border-neutral-600 dark:bg-neutral-800 dark:text-white">−</button>
+                    <span className="min-w-4 text-center text-sm font-bold">{quantity}</span>
+                    <button type="button" aria-label="Increase quantity" onClick={() => setQuantity(value => Math.min(10, value + 1))} className="h-8 w-8 rounded-full border border-neutral-300 bg-white font-bold text-neutral-900 dark:border-neutral-600 dark:bg-neutral-800 dark:text-white">+</button>
+                    <strong className="text-sm text-emerald-700 dark:text-emerald-300">BDT {baseRate.toLocaleString('en-BD')}</strong>
+                  </div>
+                </div>
+              </div>
+            )}
 
             <div>
               <label className="block text-xs font-semibold text-neutral-700 mb-1 flex items-center gap-1">
@@ -322,7 +371,7 @@ export default function BookingPage() {
           </h3>
 
           <p className="text-xs text-neutral-500">
-            Select an approved technician covering {address.area}, or leave unselected to automatically assign the nearest verified pro.
+            Choose an available approved provider for {address.area}, or leave unselected for automatic provider matching.
           </p>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
@@ -336,7 +385,7 @@ export default function BookingPage() {
             >
               <div className="font-bold text-xs text-neutral-900">⚡ Auto-Match Closest Technician</div>
               <p className="text-[11px] text-neutral-500 mt-1">
-                Shebora algorithm automatically dispatches the highest rated verified professional within your neighborhood radius.
+                Eligible providers are matched using the service and location details in your booking.
               </p>
             </div>
 
@@ -387,7 +436,7 @@ export default function BookingPage() {
 
           <div className="bg-neutral-50 p-4 rounded-xl border border-neutral-200 space-y-2 text-xs">
             <div className="flex justify-between text-neutral-600">
-              <span>Standard Service Fee ({selectedService?.name || 'Home Service'}):</span>
+              <span>{selectedPackage?.name || selectedService?.name || 'Home Service'} · {selectedVariant?.label} × {quantity}:</span>
               <span className="font-semibold text-neutral-900">৳{baseRate}</span>
             </div>
 
@@ -399,7 +448,7 @@ export default function BookingPage() {
             )}
 
             <div className="flex justify-between text-neutral-500 pt-1 text-[11px]">
-              <span>Platform Quality & Warranty Commission (included):</span>
+              <span>Platform fee:</span>
               <span>৳{platformFee} (10%)</span>
             </div>
 

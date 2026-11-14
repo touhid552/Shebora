@@ -1,8 +1,10 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
 import { api } from '../services/api.js';
 import { useLanguage } from '../context/LanguageContext.jsx';
+import { defaultServiceImage, resolveServiceImage } from '../utils/serviceImages.js';
 import { DHAKA_NEIGHBORHOODS } from '../../../backend/src/services/geoService.js';
+import { getServiceStartingOption } from '../../../shared/servicePackages.js';
 import { Search, Filter, Star, ShieldCheck, MapPin, ArrowUpDown, Check } from 'lucide-react';
 
 export default function Services() {
@@ -11,6 +13,7 @@ export default function Services() {
 
   const [services, setServices] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [loadError, setLoadError] = useState('');
 
   const initialSearch = searchParams.get('searchTerm') || '';
   const initialCategory = searchParams.get('category') || 'All';
@@ -37,6 +40,7 @@ export default function Services() {
 
   const fetchServices = async () => {
     setLoading(true);
+    setLoadError('');
     try {
       const params = {};
       if (searchTerm.trim()) params.searchTerm = searchTerm.trim();
@@ -51,6 +55,7 @@ export default function Services() {
       }
     } catch (err) {
       console.error('Error fetching services:', err);
+      setLoadError('We could not load the service catalogue. Check your connection and try again.');
     } finally {
       setLoading(false);
     }
@@ -62,7 +67,7 @@ export default function Services() {
   };
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
+    <div className="page-shell space-y-7">
       {/* Header */}
       <div>
         <div className="flex items-center gap-2 text-xs font-semibold text-emerald-700 uppercase tracking-wider mb-1">
@@ -73,7 +78,7 @@ export default function Services() {
           All Household & Repair Services
         </h1>
         <p className="text-xs sm:text-sm text-neutral-500 mt-1 max-w-2xl">
-          Browse verified doorstep technicians across 16+ Dhaka zones with transparent BDT pricing and 30-day warranty.
+          Browse the service catalogue, review starting rates and service areas, and choose a booking option.
         </p>
       </div>
 
@@ -176,7 +181,13 @@ export default function Services() {
       {/* Services List */}
       {loading ? (
         <div className="py-20 text-center text-sm text-neutral-400">
-          Loading verified Dhaka services...
+          Loading service catalogue...
+        </div>
+      ) : loadError ? (
+        <div className="status-panel mx-auto max-w-lg space-y-3 text-center" role="alert">
+          <h2 className="font-bold text-neutral-900">Could not load services</h2>
+          <p className="text-sm">{loadError}</p>
+          <button type="button" onClick={fetchServices} className="btn-primary">Try again</button>
         </div>
       ) : services.length === 0 ? (
         <div className="bg-white rounded-2xl border border-neutral-200 p-12 text-center max-w-md mx-auto space-y-3">
@@ -210,11 +221,11 @@ export default function Services() {
               <div>
                 <div className="h-44 w-full relative overflow-hidden bg-neutral-100">
                   <img
-                    src={service.image}
+                    src={resolveServiceImage(service.image)}
                     alt={service.name}
                     className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                     onError={(e) => {
-                      e.target.src = '/src/assets/why_choose_us/service-1.jpg';
+                      e.currentTarget.src = defaultServiceImage;
                     }}
                   />
                   <div className="absolute top-3 left-3 bg-white/95 backdrop-blur-xs px-2.5 py-1 rounded-md text-xs font-bold text-neutral-800 shadow-sm">
@@ -256,9 +267,9 @@ export default function Services() {
 
               <div className="p-5 pt-0 border-t border-neutral-100 mt-2 flex items-center justify-between">
                 <div>
-                  <span className="text-[10px] text-neutral-400 uppercase font-semibold block">Fixed Rate</span>
+                  <span className="text-[10px] text-neutral-400 uppercase font-semibold block">Starting at</span>
                   <span className="text-base font-extrabold text-neutral-900">
-                    ৳{service.basePrice} <span className="text-[11px] font-normal text-neutral-500">/ {service.priceUnit}</span>
+                    ৳{getServiceStartingOption(service.category, service.basePrice, service.priceUnit).price.toLocaleString('en-BD')} <span className="text-[11px] font-normal text-neutral-500">/ {getServiceStartingOption(service.category, service.basePrice, service.priceUnit).unit}</span>
                   </span>
                 </div>
 

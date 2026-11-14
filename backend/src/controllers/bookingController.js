@@ -2,11 +2,15 @@
 import { dbStore } from '../config/db.js';
 import { calculateBookingPrice, isValidStatusTransition } from '../services/pricingService.js';
 import { filterEligibleProviders, calculateDistanceKm, isWithinDhaka } from '../services/geoService.js';
+import { findServicePackage } from '../../../shared/servicePackages.js';
 
 export function createBooking(req, res) {
   try {
     const {
       serviceId,
+      packageId,
+      variantId,
+      quantity = 1,
       providerId,
       scheduledDate,
       scheduledTime,
@@ -22,6 +26,18 @@ export function createBooking(req, res) {
     const service = dbStore.getServiceById(serviceId);
     if (!service) {
       return res.status(404).json({ success: false, message: 'Requested service not found.' });
+    }
+
+    const safeQuantity = Number(quantity);
+    if (!Number.isInteger(safeQuantity) || safeQuantity < 1 || safeQuantity > 10) {
+      return res.status(400).json({ success: false, message: 'Service quantity must be between 1 and 10.' });
+    }
+
+    const packageSelection = packageId
+      ? findServicePackage(service.category, packageId, variantId)
+      : null;
+    if (packageId && !packageSelection) {
+      return res.status(400).json({ success: false, message: 'Please choose a valid service package and option.' });
     }
 
     if (!scheduledDate || !scheduledTime) {
@@ -70,8 +86,11 @@ export function createBooking(req, res) {
     const isNight = scheduledTime.includes('PM') && (scheduledTime.startsWith('10') || scheduledTime.startsWith('11'));
     
     // Server-side price calculation
+    const selectedBasePrice = packageSelection
+      ? packageSelection.variant.price * safeQuantity
+      : service.basePrice * safeQuantity;
     const pricing = calculateBookingPrice({
-      basePrice: service.basePrice,
+      basePrice: selectedBasePrice,
       materialsCost: 0,
       isNightEmergency: isNight,
       distanceKm
@@ -88,7 +107,16 @@ export function createBooking(req, res) {
       customerEmail: req.user.email,
       customerPhone: req.user.phone || address.phone || '01700000000',
       serviceId: service.id,
-      serviceName: service.name,
+      serviceName: packageSelection
+        ? `${service.name} — ${packageSelection.servicePackage.name} (${packageSelection.variant.label}) × ${safeQuantity}`
+        : service.name,
+      servicePackage: packageSelection ? {
+        id: packageSelection.servicePackage.id,
+        name: packageSelection.servicePackage.name,
+        variantId: packageSelection.variant.id,
+        variantLabel: packageSelection.variant.label,
+        quantity: safeQuantity
+      } : null,
       providerId: assignedProvider ? assignedProvider.id : null,
       providerName: assignedProvider ? assignedProvider.name : 'Unassigned (Broadcast to nearby technicians)',
       providerPhone: assignedProvider ? assignedProvider.phone : '',
