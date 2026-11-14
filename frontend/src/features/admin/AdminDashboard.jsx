@@ -29,6 +29,23 @@ export default function AdminDashboard() {
     loadAllAdminData();
   }, [activeTab]);
 
+  useEffect(() => {
+    const refreshTimer = setInterval(async () => {
+      try {
+        const [statsRes, bookingsRes] = await Promise.all([
+          api.getAdminStats(),
+          api.getAllBookings()
+        ]);
+        if (statsRes?.data) setStats(statsRes.data);
+        if (bookingsRes?.data) setBookings(bookingsRes.data);
+      } catch (err) {
+        console.error('Error refreshing admin bookings:', err);
+      }
+    }, 10000);
+
+    return () => clearInterval(refreshTimer);
+  }, []);
+
   async function loadAllAdminData() {
     setLoading(true);
     try {

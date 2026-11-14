@@ -23,10 +23,12 @@ export default function ProviderDashboard() {
 
   useEffect(() => {
     loadProviderData();
+    const refreshTimer = setInterval(() => loadProviderData(false), 10000);
+    return () => clearInterval(refreshTimer);
   }, []);
 
-  async function loadProviderData() {
-    setLoading(true);
+  async function loadProviderData(showLoading = true) {
+    if (showLoading) setLoading(true);
     try {
       const [profileRes, jobsRes] = await Promise.all([
         api.getMyProviderProfile(),
@@ -47,7 +49,7 @@ export default function ProviderDashboard() {
     } catch (err) {
       console.error('Error fetching provider data:', err);
     } finally {
-      setLoading(false);
+      if (showLoading) setLoading(false);
     }
   }
 
@@ -251,14 +253,16 @@ export default function ProviderDashboard() {
                             >
                               Accept Job
                             </button>
-                            <button
-                              type="button"
-                              disabled={updatingStatusId === job.id}
-                              onClick={() => handleStatusTransition(job.id, 'rejected')}
-                              className="px-3 py-1.5 bg-neutral-100 hover:bg-red-50 text-red-600 font-semibold text-xs rounded-lg cursor-pointer"
-                            >
-                              Decline
-                            </button>
+                            {job.providerId && (
+                              <button
+                                type="button"
+                                disabled={updatingStatusId === job.id}
+                                onClick={() => handleStatusTransition(job.id, 'rejected')}
+                                className="px-3 py-1.5 bg-neutral-100 hover:bg-red-50 text-red-600 font-semibold text-xs rounded-lg cursor-pointer"
+                              >
+                                Decline
+                              </button>
+                            )}
                           </>
                         )}
 

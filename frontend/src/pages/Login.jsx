@@ -5,7 +5,7 @@ import { useAuth } from '../context/AuthContext.jsx';
 import { Mail, Lock, ArrowRight, AlertCircle } from 'lucide-react';
 
 export default function Login({ expectedRole }) {
-  const { login, switchRole } = useAuth();
+  const { login } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -54,24 +54,6 @@ export default function Login({ expectedRole }) {
     }
   };
 
-  const handleQuickDemo = async (role) => {
-    setErrorMsg('');
-    setLoading(true);
-
-    try {
-      await switchRole(role);
-      navigate(dashboardPaths[role], { replace: true });
-    } catch (err) {
-      setErrorMsg(err.message || 'Demo login failed.');
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const demoRoles = expectedRole
-    ? [expectedRole]
-    : ['customer', 'provider', 'admin'];
-
   return (
     <div className="mx-auto w-full max-w-md px-4 py-10 sm:py-14">
       <div className="surface-card space-y-6 p-5 shadow-sm sm:p-7">
@@ -102,27 +84,6 @@ export default function Login({ expectedRole }) {
             <span>{errorMsg}</span>
           </div>
         )}
-
-        {/* Demo Accounts */}
-        <div className="p-4 rounded-2xl bg-neutral-50 border border-neutral-200 space-y-2.5">
-          <div className="text-[11px] font-bold text-neutral-500 uppercase tracking-wider text-center">
-            ⚡ 1-Click Instant Evaluation Login:
-          </div>
-
-          <div className="grid grid-cols-3 gap-1.5">
-            {demoRoles.map((role) => (
-              <button
-                key={role}
-                type="button"
-                onClick={() => handleQuickDemo(role)}
-                disabled={loading}
-                className="py-1.5 px-2 bg-white hover:bg-emerald-50 text-emerald-800 border border-neutral-200 hover:border-emerald-300 rounded-lg text-[11px] font-bold text-center cursor-pointer shadow-2xs disabled:opacity-50"
-              >
-                {portalNames[role]}
-              </button>
-            ))}
-          </div>
-        </div>
 
         {/* Login Form */}
         <form onSubmit={handleSubmit} className="space-y-4">

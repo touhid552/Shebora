@@ -37,10 +37,12 @@ export default function CustomerDashboard() {
 
   useEffect(() => {
     loadBookings();
+    const refreshTimer = setInterval(() => loadBookings(false), 10000);
+    return () => clearInterval(refreshTimer);
   }, [activeFilter]);
 
-  async function loadBookings() {
-    setLoading(true);
+  async function loadBookings(showLoading = true) {
+    if (showLoading) setLoading(true);
     try {
       const res = await api.getMyBookings(activeFilter);
       if (res?.data) {
@@ -49,7 +51,7 @@ export default function CustomerDashboard() {
     } catch (err) {
       console.error('Error fetching bookings:', err);
     } finally {
-      setLoading(false);
+      if (showLoading) setLoading(false);
     }
   }
 

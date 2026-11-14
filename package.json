@@ -8,7 +8,7 @@
     "build": "vite build",
     "preview": "vite preview",
     "start": "node server.js",
-    "test": "node --test backend/src/tests/logic.test.js",
+    "test": "node --test backend/src/tests/logic.test.js backend/src/tests/bookingAssignment.test.js",
     "clean": "rm -rf dist",
     "lint": "tsc --noEmit"
   },

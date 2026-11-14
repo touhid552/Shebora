@@ -1,7 +1,7 @@
 // Booking Controller - Complete Booking Lifecycle, Review Eligibility & Complaints
 import { dbStore } from '../config/db.js';
 import { calculateBookingPrice, isValidStatusTransition } from '../services/pricingService.js';
-import { filterEligibleProviders, calculateDistanceKm, isWithinDhaka } from '../services/geoService.js';
+import { filterEligibleProviders, isWithinDhaka } from '../services/geoService.js';
 import { findServicePackage } from '../../../shared/servicePackages.js';
 
 export function createBooking(req, res) {
@@ -64,18 +64,33 @@ export function createBooking(req, res) {
 
     if (providerId) {
       const p = dbStore.getProviderById(providerId);
-      if (!p || p.approvalStatus !== 'approved') {
+      const eligible = p && filterEligibleProviders(
+        [p],
+        customerLat,
+        customerLng,
+        service.category,
+        null,
+        { requireAvailability: true, serviceAreas: service.serviceAreas, area: address.area }
+      );
+      if (!eligible?.length) {
         return res.status(400).json({
           success: false,
-          message: 'Selected provider is not available or approved.'
+          message: 'Selected technician is unavailable or does not cover this service category, area, or location.'
         });
       }
-      assignedProvider = p;
-      distanceKm = calculateDistanceKm(customerLat, customerLng, p.location.lat, p.location.lng);
+      assignedProvider = eligible[0];
+      distanceKm = assignedProvider.distanceKm;
     } else {
-      // Auto-match closest approved provider covering this category and area
+      // Prefer the closest approved, available provider who covers this service area.
       const approvedProviders = dbStore.getProviders('approved');
-      const eligible = filterEligibleProviders(approvedProviders, customerLat, customerLng, service.category);
+      const eligible = filterEligibleProviders(
+        approvedProviders,
+        customerLat,
+        customerLng,
+        service.category,
+        null,
+        { requireAvailability: true, serviceAreas: service.serviceAreas, area: address.area }
+      );
       if (eligible.length > 0) {
         assignedProvider = eligible[0];
         distanceKm = assignedProvider.distanceKm;
